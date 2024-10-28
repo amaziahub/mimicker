@@ -12,12 +12,8 @@ def test_should_get_status_code():
         .body({"hello": "mockingbird"})
         .status(201)
     )
-
     server.start()
-
-    time.sleep(1)
-
     response = requests.get('http://localhost:8080/hello')
-    assert_that(response.status_code, is_(201))
 
+    assert_that(response.status_code, is_(201))
     server.shutdown()
