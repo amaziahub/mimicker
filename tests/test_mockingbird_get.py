@@ -1,5 +1,3 @@
-import time
-
 import requests
 from hamcrest import assert_that, is_
 
