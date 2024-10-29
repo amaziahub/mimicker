@@ -27,4 +27,11 @@ def test_get_json_response(mockingbird_server):
     response = requests.get('http://localhost:8080/hello')
     assert_that(response.headers, has_entry("Content-Type", "application/json"))
 
+
+def test_get_path_param(mockingbird_server):
+    mockingbird_server.routes(
+        get("/hello/{greet}").body({"message": "Hello, {greet}!"}).status(200)
+    )
+    response = requests.get('http://localhost:8080/hello/World')
+
     assert_that(response.json(), equal_to({"message": "Hello, World!"}))

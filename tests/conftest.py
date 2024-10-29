@@ -1,5 +1,4 @@
 import pytest
-import threading
 
 from mockingbird.mockingbird import mockingbird
 

@@ -1,11 +1,12 @@
 import http.server
 import json
 import logging
+from re import Pattern
 from typing import Dict, Tuple, Any, Optional, Callable
 
 
 class MockingbirdHandler(http.server.SimpleHTTPRequestHandler):
-    stubs: Dict[str, Dict[str, Tuple[int, Any, Optional[Callable[[], Tuple[int, Any]]]]]] = {}
+    stubs: Dict[str, Dict[Pattern, Tuple[int, Any, Optional[Callable[[], Tuple[int, Any]]]]]] = {}
 
     def do_GET(self):
         self._handle_request("GET")
@@ -20,22 +21,32 @@ class MockingbirdHandler(http.server.SimpleHTTPRequestHandler):
         self._handle_request("DELETE")
 
     def _handle_request(self, method: str):
-        if self.path in self.stubs[method]:
-            status_code, response, response_func = self.stubs[method][self.path]
+        matched_stub = None
+        path_params = {}
+
+        # Match the request path against the compiled regex patterns in stubs
+        for compiled_path, (status_code, response, response_func) in self.stubs[method].items():
+            match = compiled_path.match(self.path)
+            if match:
+                matched_stub = (status_code, response, response_func)
+                path_params = match.groupdict()  # Extract path parameters
+                break
+
+        if matched_stub:
+            status_code, response, response_func = matched_stub
             if response_func:
-                # If a response function is defined, call it to get status and response
                 status_code, response = response_func()
 
             self.send_response(status_code)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
 
+            # Format response if needed using path parameters
             if isinstance(response, dict):
+                response = {k: (v.format(**path_params) if isinstance(v, str) else v) for k, v in response.items()}
                 self.wfile.write(json.dumps(response).encode('utf-8'))
             elif isinstance(response, str):
                 self.wfile.write(response.encode('utf-8'))
-            elif isinstance(response, bytes):
-                self.wfile.write(response)
             else:
                 self.wfile.write(str(response).encode('utf-8'))
 
@@ -44,6 +55,3 @@ class MockingbirdHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(404)
             self.end_headers()
             self.log_message("Responded with 404 for %s request to %s", method, self.path)
-
-    def log_message(self, format: str, *args):
-        logging.info("%s - %s" % (self.address_string(), format % args))
