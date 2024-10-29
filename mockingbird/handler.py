@@ -1,11 +1,11 @@
 import http.server
 import json
 import logging
-from typing import Dict, Tuple, Any
+from typing import Dict, Tuple, Any, Optional, Callable
 
 
 class MockingbirdHandler(http.server.SimpleHTTPRequestHandler):
-    stubs: Dict[str, Dict[str, Tuple[int, Any]]] = {}
+    stubs: Dict[str, Dict[str, Tuple[int, Any, Optional[Callable[[], Tuple[int, Any]]]]]] = {}
 
     def do_GET(self):
         self._handle_request("GET")
@@ -21,11 +21,24 @@ class MockingbirdHandler(http.server.SimpleHTTPRequestHandler):
 
     def _handle_request(self, method: str):
         if self.path in self.stubs[method]:
-            status_code, response = self.stubs[method][self.path]
+            status_code, response, response_func = self.stubs[method][self.path]
+            if response_func:
+                # If a response function is defined, call it to get status and response
+                status_code, response = response_func()
+
             self.send_response(status_code)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
-            self.wfile.write(json.dumps(response).encode('utf-8'))
+
+            if isinstance(response, dict):
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+            elif isinstance(response, str):
+                self.wfile.write(response.encode('utf-8'))
+            elif isinstance(response, bytes):
+                self.wfile.write(response)
+            else:
+                self.wfile.write(str(response).encode('utf-8'))
+
             self.log_message("Responded with %d for %s request to %s", status_code, method, self.path)
         else:
             self.send_response(404)
