@@ -1,6 +1,5 @@
 import http.server
 import json
-import logging
 from re import Pattern
 from typing import Dict, Tuple, Any, Optional, Callable
 
