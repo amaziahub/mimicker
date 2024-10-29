@@ -1,4 +1,13 @@
 # Mockingbird
+[![Mockingbird Tests](https://github.com/amaziahub/mockingbird/actions/workflows/test.yml/badge.svg)](https://github.com/amaziahub/mockingbird/actions/workflows/test.yml)
+
+Mokingbird is a Python-native HTTP mocking server inspired by WireMock, designed to simplify the process of stubbing and mocking HTTP endpoints for testing purposes.
+Mokingbird requires no third-party libraries and is lightweight, making it ideal for integration testing, local development, and CI environments.
+
+<p align="center">
+  <img src="mockingbird.jpg" alt="Mockingbird logo">
+</p>
+
 
 ## Features
 Create HTTP stubs for various endpoints and methods
@@ -18,10 +27,13 @@ Usage
 To start Mockingbird on a specific port with a simple endpoint, you can use the following code snippet:
 
 ```python
-from mockingbird import serve
+from mockingbird.mockingbird import mockingbird, get
 
-# Start server and define an endpoint
-serve(8080).get('/example', response={"message": "Hello, Mockingbird!"})
+mockingbird(8080).routes(
+    get("/hello").
+    body({"message": "Hello, World!"}).
+    status(200)
+)
 ```
 
 ### Running Tests
