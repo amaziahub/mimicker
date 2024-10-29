@@ -29,7 +29,9 @@ def test_route_with_path_parameter():
 
 
 def test_route_build():
-    route = Route("GET", "/hello/{greet}").body({"message": "Hello, {greet}!"}).status(201)
+    route = (Route("GET", "/hello/{greet}")
+             .body({"message": "Hello, {greet}!"})
+             .status(201))
     route_config = route.build()
 
     assert_that(route_config["method"], equal_to("GET"))

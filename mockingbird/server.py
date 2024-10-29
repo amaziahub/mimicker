@@ -11,7 +11,9 @@ from mockingbird.route import Route
 
 class MockingbirdServer:
     def __init__(self, port: int = 8080):
-        self.stubs: Dict[str, Dict[Pattern, Tuple[int, Any, Optional[Callable[[], Tuple[int, Any]]]]]] = {
+        self.stubs: Dict[str, Dict[
+            Pattern,
+            Tuple[int, Any, Optional[Callable[[], Tuple[int, Any]]]]]] = {
             "GET": {},
             "POST": {},
             "PUT": {},
@@ -39,7 +41,8 @@ class MockingbirdServer:
         return self
 
     def start(self):
-        logging.info("MockingbirdServer starting on port %s", self.server.server_address[1])
+        logging.info("MockingbirdServer starting on port %s",
+                     self.server.server_address[1])
         self._thread.start()
         return self
 

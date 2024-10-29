@@ -12,7 +12,8 @@ class Route:
         self._response_func: Optional[Callable[[], Tuple[int, Any]]] = None
 
         escaped_path = re.escape(path)
-        parameterized_path = re.sub(r'\\{(\w+)\\}', r'(?P<\1>[^/]+)', escaped_path)
+        parameterized_path = re.sub(r'\\{(\w+)\\}',
+                                    r'(?P<\1>[^/]+)', escaped_path)
         self._compiled_path: Pattern = re.compile(f"^{parameterized_path}$")
 
     def body(self, response: Dict[str, Any]):
