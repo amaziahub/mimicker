@@ -4,6 +4,14 @@ from hamcrest import assert_that, is_, has_entry, equal_to
 from mockingbird.mockingbird import get
 
 
+def test_get_404(mockingbird_server):
+    mockingbird_server.routes(
+        get("/hello").body({"message": "Hello, World!"})
+    )
+    response = requests.get('http://localhost:8080/hallo')
+    assert_that(response.status_code, is_(404))
+
+
 def test_get_default_200_status_code(mockingbird_server):
     mockingbird_server.routes(
         get("/hello").body({"message": "Hello, World!"})
