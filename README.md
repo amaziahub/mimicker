@@ -1,5 +1,6 @@
 # Mockingbird
 [![Mockingbird Tests](https://github.com/amaziahub/mockingbird/actions/workflows/test.yml/badge.svg)](https://github.com/amaziahub/mockingbird/actions/workflows/test.yml)
+[![License](http://img.shields.io/:license-apache2.0-red.svg)](http://doge.mit-license.org)
 
 Mokingbird is a Python-native HTTP mocking server inspired by WireMock, designed to simplify the process of stubbing and mocking HTTP endpoints for testing purposes.
 Mokingbird requires no third-party libraries and is lightweight, making it ideal for integration testing, local development, and CI environments.
