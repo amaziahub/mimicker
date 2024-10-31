@@ -2,11 +2,11 @@ import http.server
 import json
 from typing import Any, Tuple, Optional, Dict, Callable
 
-from mockingbird.stub_matcher import StubMatcher
+from mockingbird.stub_group import StubGroup
 
 
 class MockingbirdHandler(http.server.SimpleHTTPRequestHandler):
-    def __init__(self, stub_matcher: StubMatcher, *args, **kwargs):
+    def __init__(self, stub_matcher: StubGroup, *args, **kwargs):
         self.stub_matcher = stub_matcher  # Assign the injected StubMatcher
         super().__init__(*args, **kwargs)
 
@@ -23,14 +23,16 @@ class MockingbirdHandler(http.server.SimpleHTTPRequestHandler):
         self._handle_request("DELETE")
 
     def _handle_request(self, method: str):
-        matched_stub, path_params = self.stub_matcher.match_stub(method, self.path)
+        matched_stub, path_params = self.stub_matcher.match(method, self.path)
 
         if matched_stub:
             self._send_response(matched_stub, path_params)
         else:
             self._send_404_response(method)
 
-    def _send_response(self, matched_stub: Tuple[int, Any, Optional[Callable]], path_params: Dict[str, str]):
+    def _send_response(self,
+                       matched_stub: Tuple[int, Any, Optional[Callable]],
+                       path_params: Dict[str, str]):
         status_code, response, response_func = matched_stub
         if response_func:
             status_code, response = response_func()
