@@ -7,7 +7,7 @@ from mockingbird.stub_group import StubGroup
 
 class MockingbirdHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, stub_matcher: StubGroup, *args, **kwargs):
-        self.stub_matcher = stub_matcher  # Assign the injected StubMatcher
+        self.stub_matcher = stub_matcher
         super().__init__(*args, **kwargs)
 
     def do_GET(self):
