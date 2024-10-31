@@ -2,47 +2,36 @@ import atexit
 import logging
 import socketserver
 import threading
-from re import Pattern
-from typing import Dict, Tuple, Any, Optional, Callable
 
 from mockingbird.handler import MockingbirdHandler
 from mockingbird.route import Route
+from mockingbird.stub_matcher import StubMatcher
 
 
 class MockingbirdServer:
     def __init__(self, port: int = 8080):
-        self.stubs: Dict[str, Dict[
-            Pattern,
-            Tuple[int, Any, Optional[Callable[[], Tuple[int, Any]]]]]] = {
-            "GET": {},
-            "POST": {},
-            "PUT": {},
-            "DELETE": {}
-        }
+        self.stub_matcher = StubMatcher()
         self.server = socketserver.TCPServer(("", port), self._handler_factory)
         self._thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         atexit.register(self.shutdown)
 
     def _handler_factory(self, *args):
-        handler = MockingbirdHandler
-        handler.stubs = self.stubs
-        return handler(*args)
+        return MockingbirdHandler(self.stub_matcher, *args)
 
     def routes(self, *routes: Route):
         for route in routes:
             route_config = route.build()
-            method = route_config["method"]
-            compiled_path = route_config["compiled_path"]
-            self.stubs[method][compiled_path] = (
-                route_config["status"],
-                route_config["body"],
-                route_config["response_func"]
+            self.stub_matcher.add_stub(
+                method=route_config["method"],
+                pattern=route_config["compiled_path"],
+                status_code=route_config["status"],
+                response=route_config["body"],
+                response_func=route_config["response_func"]
             )
         return self
 
     def start(self):
-        logging.info("MockingbirdServer starting on port %s",
-                     self.server.server_address[1])
+        logging.info("MockingbirdServer starting on port %s", self.server.server_address[1])
         self._thread.start()
         return self
 

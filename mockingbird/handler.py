@@ -1,14 +1,14 @@
 import http.server
 import json
-from re import Pattern
-from typing import Dict, Tuple, Any, Optional, Callable
+from typing import Any, Tuple, Optional, Dict, Callable
+
+from mockingbird.stub_matcher import StubMatcher
 
 
 class MockingbirdHandler(http.server.SimpleHTTPRequestHandler):
-    stubs: Dict[str, Dict[
-        Pattern,
-        Tuple[int, Any, Optional[Callable[[], Tuple[int, Any]]]]
-    ]] = {}
+    def __init__(self, stub_matcher: StubMatcher, *args, **kwargs):
+        self.stub_matcher = stub_matcher  # Assign the injected StubMatcher
+        super().__init__(*args, **kwargs)
 
     def do_GET(self):
         self._handle_request("GET")
@@ -23,29 +23,14 @@ class MockingbirdHandler(http.server.SimpleHTTPRequestHandler):
         self._handle_request("DELETE")
 
     def _handle_request(self, method: str):
-        matched_stub, path_params = self._match_stub(method)
+        matched_stub, path_params = self.stub_matcher.match_stub(method, self.path)
 
         if matched_stub:
             self._send_response(matched_stub, path_params)
         else:
             self._send_404_response(method)
 
-    def _match_stub(self, method: str):
-        matched_stub = None
-        path_params = {}
-
-        # Match the request path against the compiled regex patterns in stubs
-        for compiled_path, (status_code, response, response_func) in\
-                self.stubs[method].items():
-            match = compiled_path.match(self.path)
-            if match:
-                matched_stub = (status_code, response, response_func)
-                path_params = match.groupdict()  # Extract path parameters
-                break
-
-        return matched_stub, path_params
-
-    def _send_response(self, matched_stub, path_params):
+    def _send_response(self, matched_stub: Tuple[int, Any, Optional[Callable]], path_params: Dict[str, str]):
         status_code, response, response_func = matched_stub
         if response_func:
             status_code, response = response_func()
