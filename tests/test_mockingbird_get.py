@@ -1,54 +1,71 @@
-import requests
 from hamcrest import assert_that, is_, has_entry, equal_to
 
 from mockingbird.mockingbird import get
+from tests.support.client import Client
 
 
 def test_get_404(mockingbird_server):
     mockingbird_server.routes(
-        get("/hello").body({"message": "Hello, World!"})
+        get("/hello")
     )
-    response = requests.get('http://localhost:8080/hallo')
-    assert_that(response.status_code, is_(404))
+    resp = Client().get('/not-found')
+    assert_that(resp.status_code, is_(404))
 
 
 def test_get_default_200_status_code(mockingbird_server):
     mockingbird_server.routes(
-        get("/hello").body({"message": "Hello, World!"})
+        get("/hello")
     )
-    response = requests.get('http://localhost:8080/hello')
-    assert_that(response.status_code, is_(200))
+    resp = Client().get('/hello')
+    assert_that(resp.status_code, is_(200))
 
 
-def test_get_default_application_json_header(mockingbird_server):
+def test_get_picked_status_code(mockingbird_server):
     mockingbird_server.routes(
-        get("/hello").body({"message": "Hello, World!"}).status(200)
+        get("/hello").
+        status(201)
     )
-    response = requests.get('http://localhost:8080/hello')
-    assert_that(response.headers, has_entry("Content-Type", "application/json"))
+    resp = Client().get('/hello')
+    assert_that(resp.status_code, is_(201))
 
 
-def test_get_json_response(mockingbird_server):
+def test_get_body_as_text(mockingbird_server):
     mockingbird_server.routes(
-        get("/hello").body({"message": "Hello, World!"}).status(200)
+        get('/hello').
+        body("hello world")
     )
-    response = requests.get('http://localhost:8080/hello')
-    assert_that(response.headers, has_entry("Content-Type", "application/json"))
+    resp = Client().get('/hello')
+    assert_that(resp.text, is_("hello world"))
+
+
+def test_get_body_as_json(mockingbird_server):
+    body = {"message": "Hello, World!"}
+    mockingbird_server.routes(
+        get("/hello").
+        body(body).
+        status(200)
+    )
+    resp = Client().get('/hello')
+    assert_that(resp.headers, has_entry("Content-Type", "application/json"))
+    assert_that(resp.json(), equal_to(body))
 
 
 def test_get_path_param(mockingbird_server):
     mockingbird_server.routes(
-        get("/hello/{greet}").body({"message": "Hello, {greet}!"}).status(200)
+        get("/hello/{greet}").
+        body({"message": "Hello, {greet}!"}).
+        status(200)
     )
-    response = requests.get('http://localhost:8080/hello/World')
+    resp = Client().get('/hello/world')
+    assert_that(resp.json(), equal_to({"message": "Hello, world!"}))
 
-    assert_that(response.json(), equal_to({"message": "Hello, World!"}))
 
-
-def test_get_none_response(mockingbird_server):
+def test_get_empty_response(mockingbird_server):
     mockingbird_server.routes(
-        get("/empty").body(None).status(204)
+        get("/empty").
+        body(None).
+        status(204)
     )
-    response = requests.get('http://localhost:8080/empty')
-    assert_that(response.status_code, is_(204))
-    assert_that(response.text, is_(""))
+    resp = Client().get('/empty')
+    assert_that(resp.status_code, is_(204))
+    assert_that(resp.text, is_(""))

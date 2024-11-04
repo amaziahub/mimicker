@@ -1,6 +1,6 @@
 import re
 
-from typing import Dict, Tuple, Any, Callable, Optional, Pattern
+from typing import Dict, Tuple, Any, Callable, Optional, Pattern, Union
 
 
 class Route:
@@ -16,8 +16,8 @@ class Route:
                                     r'(?P<\1>[^/]+)', escaped_path)
         self._compiled_path: Pattern = re.compile(f"^{parameterized_path}$")
 
-    def body(self, response: Dict[str, Any] = None):
-        self._body = response
+    def body(self, response: Union[Dict[str, Any], str] = None):
+        self._body = response if response is not None else ""
         return self
 
     def status(self, status_code: int):
