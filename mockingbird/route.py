@@ -16,7 +16,7 @@ class Route:
                                     r'(?P<\1>[^/]+)', escaped_path)
         self._compiled_path: Pattern = re.compile(f"^{parameterized_path}$")
 
-    def body(self, response: Dict[str, Any]):
+    def body(self, response: Dict[str, Any] = None):
         self._body = response
         return self
 

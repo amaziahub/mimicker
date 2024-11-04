@@ -2,6 +2,12 @@ from hamcrest import assert_that, none, is_
 from mockingbird.stub_group import StubGroup
 
 
+def test_none_given_no_stubs():
+    stub_group = StubGroup()
+    matched, _ = stub_group.match("GET", "/hello/kuku")
+    assert_that(matched, none())
+
+
 def test_no_match():
     stub_group = StubGroup()
     stub_group.add("GET", "/hi", 200, {"message": "hello"})
@@ -25,8 +31,10 @@ def test_none_on_partial_match():
 
 def test_match_w_path_param():
     stub_group = StubGroup()
-    stub_group.add("GET", r"^/hello/(?P<name>\w+)$",
-                   200, {"message": "Hello, {name}!"})
+    stub_group.add("GET",
+                   r"^/hello/(?P<name>\w+)$",
+                   200,
+                   {"message": "Hello, {name}!"})
 
     matched, path_param = stub_group.match("GET", "/hello/mockingbird")
 

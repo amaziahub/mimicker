@@ -43,3 +43,12 @@ def test_get_path_param(mockingbird_server):
     response = requests.get('http://localhost:8080/hello/World')
 
     assert_that(response.json(), equal_to({"message": "Hello, World!"}))
+
+
+def test_get_none_response(mockingbird_server):
+    mockingbird_server.routes(
+        get("/empty").body(None).status(204)
+    )
+    response = requests.get('http://localhost:8080/empty')
+    assert_that(response.status_code, is_(204))
+    assert_that(response.text, is_(""))
