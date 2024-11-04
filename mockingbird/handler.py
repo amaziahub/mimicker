@@ -1,6 +1,6 @@
 import http.server
 import json
-from typing import Any, Tuple, Optional, Dict, Callable
+from typing import Any, Tuple, Optional, Dict, Callable, List
 
 from mockingbird.stub_group import StubGroup
 
@@ -23,24 +23,43 @@ class MockingbirdHandler(http.server.SimpleHTTPRequestHandler):
         self._handle_request("DELETE")
 
     def _handle_request(self, method: str):
-        matched_stub, path_params = self.stub_matcher.match(method, self.path)
+        request_headers = {key.lower(): value for key, value in self.headers.items()}
+        matched_stub, path_params = self.stub_matcher.match(
+            method, self.path, request_headers=request_headers
+        )
 
         if matched_stub:
             self._send_response(matched_stub, path_params)
         else:
             self._send_404_response(method)
 
-    def _send_response(self,
-                       matched_stub: Tuple[int, Any, Optional[Callable]],
-                       path_params: Dict[str, str]):
-        status_code, response, response_func = matched_stub
+    def _send_response(
+            self,
+            matched_stub: Tuple[
+                int, Any, Optional[Callable], Optional[List[Tuple[str, str]]]
+            ],
+            path_params: Dict[str, str]
+    ):
+        status_code, response, response_func, headers = matched_stub
         if response_func:
             status_code, response = response_func()
 
         self.send_response(status_code)
-        self.send_header('Content-Type', 'application/json')
-        self.end_headers()
+        self._set_headers(headers)
 
+        self.end_headers()
+        self._write_response(response, path_params)
+
+    def _set_headers(self, headers: Optional[List[Tuple[str, str]]]):
+        if headers:
+            for header_name, header_value in headers:
+                self.send_header(header_name, header_value)
+            if not any(header[0].lower() == 'content-type' for header in headers):
+                self.send_header('Content-Type', 'application/json')
+        else:
+            self.send_header('Content-Type', 'application/json')
+
+    def _write_response(self, response: Any, path_params: Dict[str, str]):
         if isinstance(response, dict):
             response = self._format_response(response, path_params)
             self.wfile.write(json.dumps(response).encode('utf-8'))

@@ -26,6 +26,7 @@ class MockingbirdServer:
                 pattern=route_config["compiled_path"],
                 status_code=route_config["status"],
                 response=route_config["body"],
+                headers=route_config["headers"],
                 response_func=route_config["response_func"]
             )
         return self

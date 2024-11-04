@@ -1,6 +1,6 @@
 import re
 
-from typing import Dict, Tuple, Any, Callable, Optional, Pattern, Union
+from typing import Dict, Tuple, Any, Callable, Optional, Pattern, Union, List
 
 
 class Route:
@@ -9,6 +9,7 @@ class Route:
         self.path = path
         self._body = {}
         self._status = 200
+        self._headers: List[Tuple[str, str]] = []
         self._response_func: Optional[Callable[[], Tuple[int, Any]]] = None
 
         escaped_path = re.escape(path)
@@ -24,6 +25,10 @@ class Route:
         self._status = status_code
         return self
 
+    def headers(self, headers: List[Tuple[str, str]]):
+        self._headers = headers
+        return self
+
     def response_func(self, func: Callable[[], Tuple[int, Any]]):
         self._response_func = func
         return self
@@ -35,5 +40,6 @@ class Route:
             "compiled_path": self._compiled_path,
             "body": self._body,
             "status": self._status,
+            "headers": self._headers,
             "response_func": self._response_func
         }

@@ -19,7 +19,7 @@ def test_match():
     stub_group = StubGroup()
     stub_group.add("GET", "/hi", 200, {"message": "hello"})
     matched, _ = stub_group.match("GET", "/hi")
-    assert_that(matched, is_((200, {"message": "hello"}, None)))
+    assert_that(matched, is_((200, {"message": "hello"}, None, None)))
 
 
 def test_none_on_partial_match():
@@ -38,7 +38,7 @@ def test_match_w_path_param():
 
     matched, path_param = stub_group.match("GET", "/hello/mockingbird")
 
-    assert_that(matched, is_((200, {"message": "Hello, {name}!"}, None)))
+    assert_that(matched, is_((200, {"message": "Hello, {name}!"}, None, None)))
     assert_that(path_param, is_({"name": "mockingbird"}))
 
 
@@ -51,4 +51,30 @@ def test_match_stub_with_response_func():
     stub_group.add("GET", r"^/dynamic$",
                    200, {}, response_func=dynamic_response)
     matched, _ = stub_group.match("GET", "/dynamic")
-    assert_that(matched, is_((200, {}, dynamic_response)))
+    assert_that(matched, is_((200, {}, dynamic_response, None)))
+
+
+def test_no_match_given_unexpected_header():
+    stub_group = StubGroup()
+    stub_group.add(
+        "GET", "/hi", 200,
+        {"message": "hello"}, headers=[("Content-Type", "text/plain")])
+    matched, _ = stub_group.match(
+        "GET", "/hi",
+        request_headers={"Content-Type": "application/json"})
+    assert_that(matched, none())
+
+
+def test_match_given_expected_headers():
+    stub_group = StubGroup()
+    stub_group.add("GET", "/hi", 200,
+                   {"message": "hello"},
+                   headers=[
+                       ("Content-Type", "application/json"),
+                       ("Authorization", "Bearer YOUR_TOKEN"),
+                       ("Custom-Header", "CustomValue")
+                   ])
+    matched, _ = stub_group.match(
+        "GET", "/hi",
+        request_headers={"Content-Type": "application/json"})
+    assert_that(matched, none())

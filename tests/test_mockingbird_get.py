@@ -69,3 +69,13 @@ def test_get_empty_response(mockingbird_server):
     resp = Client().get('/empty')
     assert_that(resp.status_code, is_(204))
     assert_that(resp.text, is_(""))
+
+
+def test_get_headers(mockingbird_server):
+    mockingbird_server.routes(
+        get("/hello").
+        body("hi there").
+        headers([("Content-Type", "text/plain")])
+    )
+    resp = Client().get('/hello', {"Content-Type": "application/json"})
+    assert_that(resp.status_code, is_(404))

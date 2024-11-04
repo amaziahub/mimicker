@@ -1,5 +1,5 @@
 import re
-from typing import Pattern, Dict, Tuple, Any, Optional, Callable, Union
+from typing import Pattern, Dict, Tuple, Any, Optional, Callable, Union, List
 
 
 class StubGroup:
@@ -8,13 +8,14 @@ class StubGroup:
             str,
             Dict[
                 Pattern,
-                Tuple[int, Any, Optional[
-                    Callable[[], Tuple[int, Any]]]
-                ]]] = {}
+                Tuple[int, Any, Optional[Callable], Optional[List[Tuple[str, str]]]]
+            ]
+        ] = {}
 
-    def add(self, method: str,
-            pattern: Union[str, Pattern], status_code: int, response: Any,
-            response_func: Optional[Callable[[], Tuple[int, Any]]] = None):
+    def add(self, method: str, pattern: Union[str, Pattern],
+            status_code: int, response: Any,
+            response_func: Optional[Callable[[], Tuple[int, Any]]] = None,
+            headers: Optional[List[Tuple[str, str]]] = None):
         if method not in self.stubs:
             self.stubs[method] = {}
 
@@ -22,17 +23,27 @@ class StubGroup:
             pattern = re.compile(f"^{re.sub(r'\\{(\\w+)\\}',
                                             r'(?P<\\1>[^/]+)', pattern)}$")
 
-        self.stubs[method][pattern] = (status_code, response, response_func)
+        self.stubs[method][pattern] = (status_code, response, response_func, headers)
 
-    def match(self, method: str, path: str):
+    def match(self, method: str, path: str,
+              request_headers: Optional[Dict[str, str]] = None):
         matched_stub = None
         path_params = {}
 
-        for compiled_path, (status_code, response, response_func)\
+        for compiled_path, (status_code, response, response_func, headers)\
                 in self.stubs.get(method, {}).items():
             match = compiled_path.match(path)
             if match:
-                matched_stub = (status_code, response, response_func)
+                if headers and request_headers:
+                    headers_included = all(
+                        header_name in request_headers
+                        and request_headers[header_name] == header_value
+                        for header_name, header_value in headers
+                    )
+                    if not headers_included:
+                        continue
+
+                matched_stub = (status_code, response, response_func, headers)
                 path_params = match.groupdict()
                 break
 
