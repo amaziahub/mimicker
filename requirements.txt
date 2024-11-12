@@ -1,4 +1,0 @@
-pytest
-PyHamcrest
-requests
-flake8

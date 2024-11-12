@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "mockingbird"
+version = "0.1.0"
+description = "A lightweight HTTP mocking server for Python"
+authors = ["Amazia Gur <amaziagur@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+keywords = ["http", "mocking", "testing", "mock-server", "stubbing", "ci-cd", "http-server", "testing-tools", "stub-server", "purepython"]
+repository = "https://github.com/amaziahub/mockingbird"
+homepage = "https://github.com/amaziahub/mockingbird"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+requests = "^2.0"
+
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.0"
+PyHamcrest = "^2.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

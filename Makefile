@@ -2,8 +2,9 @@
 
 test:
 	@echo "Running tests..."
-	pytest
+	poetry run pytest
+
 
 install:
 	@echo "Installing dependencies..."
-	pip install -r requirements.txt
+	poetry install
