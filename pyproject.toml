@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "py-mockingbird"
+name = "mockingbird"
 version = "0.1.0"
 description = "A lightweight HTTP mocking server for Python"
 authors = ["Amazia Gur <amaziagur@gmail.com>"]
