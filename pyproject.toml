@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "mockingbird"
+name = "py-mockingbird"
 version = "0.1.0"
 description = "A lightweight HTTP mocking server for Python"
-authors = ["Amazia Gur <privateseemore@gmail.com>"]
+authors = ["Amazia Gur <amaziagur@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 keywords = ["http", "mocking", "testing", "mock-server", "stubbing", "ci-cd", "http-server", "testing-tools", "stub-server", "purepython"]
