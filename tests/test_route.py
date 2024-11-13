@@ -1,5 +1,5 @@
 import re
-from mockingbird.route import Route
+from mimicker.route import Route
 from hamcrest import assert_that, equal_to, has_entry, instance_of
 
 

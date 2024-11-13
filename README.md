@@ -1,18 +1,18 @@
 <p align="center">
-  <img src="mockingbird.jpg" alt="Mockingbird logo" 
+  <img src="mimicker.jpg" alt="Mimicker logo" 
        style="width: 200px; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border: 2px solid black;">
 </p>
 <div>
 
 <div align="center">
 
-> **Mockingbird** – Your lightweight, Python-native HTTP mocking server.
+> **Mimicker** – Your lightweight, Python-native HTTP mocking server.
 
 </div>
 
 <div align="center">
 
-[![Mockingbird Tests](https://github.com/amaziahub/mockingbird/actions/workflows/test.yml/badge.svg)](https://github.com/amaziahub/mockingbird/actions/workflows/test.yml)
+[![Mimicker Tests](https://github.com/amaziahub/mockingbird/actions/workflows/test.yml/badge.svg)](https://github.com/amaziahub/mockingbird/actions/workflows/test.yml)
 [![License](http://img.shields.io/:license-apache2.0-red.svg)](http://doge.mit-license.org)
 ![Poetry](https://img.shields.io/badge/managed%20with-poetry-blue)
 
@@ -20,9 +20,9 @@
 </div>
 
 
-Mockingbird is a Python-native HTTP mocking server inspired by WireMock, designed to simplify the process of stubbing and
+Mimicker is a Python-native HTTP mocking server inspired by WireMock, designed to simplify the process of stubbing and
 mocking HTTP endpoints for testing purposes.
-Mockingbird requires no third-party libraries and is lightweight, making it ideal for integration testing, local
+Mimicker requires no third-party libraries and is lightweight, making it ideal for integration testing, local
 development, and CI environments.
 
 ## Features
@@ -33,28 +33,28 @@ development, and CI environments.
 
 ## Installation
 
-Mockingbird can be installed directly from PyPI using pip or Poetry:
+Mimicker can be installed directly from PyPI using pip or Poetry:
 
 ### Using pip:
 
 ```bash
-pip install mockingbird
+pip install mimicker
 ```
 
 ### Using poetry:
 
 ```bash
-poetry add mockingbird
+poetry add mimicker
 ```
 
 ## Usage
 
-To start Mockingbird on a specific port with a simple endpoint, you can use the following code snippet:
+To start Mimicker on a specific port with a simple endpoint, you can use the following code snippet:
 
 ```python
-from mockingbird.mockingbird import mockingbird, get
+from mimicker.mimicker import mimicker, get
 
-mockingbird(8080).routes(
+mimicker(8080).routes(
     get("/hello").
     body({"message": "Hello, World!"}).
     status(200)
@@ -65,12 +65,12 @@ mockingbird(8080).routes(
 
 #### Using Path Parameters
 
-Mockingbird can handle path parameters dynamically. Here's how you can mock an endpoint with a variable in the path:
+Mimicker can handle path parameters dynamically. Here's how you can mock an endpoint with a variable in the path:
 
 ```python
-from mockingbird.mockingbird import mockingbird, get
+from mimicker.mimicker import mimicker, get
 
-mockingbird(8080).routes(
+mimicker(8080).routes(
     get("/hello/{name}")
     .body({"message": "Hello, {name}!"})
     .status(200)
@@ -85,9 +85,9 @@ mockingbird(8080).routes(
 You can also mock responses with custom headers:
 
 ```python
-from mockingbird.mockingbird import mockingbird, get
+from mimicker.mimicker import mimicker, get
 
-mockingbird(8080).routes(
+mimicker(8080).routes(
     get("/hello")
     .body("Hello with headers")
     .headers([("Content-Type", "text/plain"), ("Custom-Header", "Value")])
@@ -99,13 +99,13 @@ mockingbird(8080).routes(
 
 #### Multiple Routes
 
-Mockingbird allows you to define multiple routes for different HTTP methods and paths. Here's an example with `GET`
+Mimicker allows you to define multiple routes for different HTTP methods and paths. Here's an example with `GET`
 and `POST` routes:
 
 ```python
-from mockingbird.mockingbird import mockingbird, get, post
+from mimicker.mimicker import mimicker, get, post
 
-mockingbird(8080).routes(
+mimicker(8080).routes(
     get("/greet")
     .body({"message": "Hello, world!"})
     .status(200),
@@ -126,9 +126,9 @@ mockingbird(8080).routes(
 You can also mock different HTTP status codes for the same endpoint:
 
 ```python
-from mockingbird.mockingbird import mockingbird, get
+from mimicker.mimicker import mimicker, get
 
-mockingbird(8080).routes(
+mimicker(8080).routes(
     get("/status")
     .body({"message": "Success"})
     .status(200),
@@ -144,12 +144,12 @@ mockingbird(8080).routes(
 
 #### Mocking Responses with JSON Body
 
-Mockingbird supports JSON bodies, making it ideal for API testing:
+Mimicker supports JSON bodies, making it ideal for API testing:
 
 ```python
-from mockingbird.mockingbird import mockingbird, get
+from mimicker.mimicker import mimicker, get
 
-mockingbird(8080).routes(
+mimicker(8080).routes(
     get("/json")
     .body({"message": "Hello, JSON!"})
     .status(200)
@@ -160,15 +160,15 @@ mockingbird(8080).routes(
 
 #### Supporting Other Body Types (Text, Files, etc.)
 
-In addition to JSON bodies, Mockingbird supports other types of content for the response body. Here's how you can return
+In addition to JSON bodies, Mimicker supports other types of content for the response body. Here's how you can return
 text or file content:
 
 ##### Text Response:
 
 ```python
-from mockingbird.mockingbird import mockingbird, get
+from mimicker.mimicker import mimicker, get
 
-mockingbird(8080).routes(
+mimicker(8080).routes(
     get("/text")
     .body("This is a plain text response")
     .status(200)
@@ -182,9 +182,9 @@ mockingbird(8080).routes(
 You can also return files from a mock endpoint:
 
 ```python
-from mockingbird.mockingbird import mockingbird, get
+from mimicker.mimicker import mimicker, get
 
-mockingbird(8080).routes(
+mimicker(8080).routes(
     get("/file")
     .body(open("example.txt", "rb").read())  # Mock a file response
     .status(200)
@@ -205,8 +205,8 @@ mockingbird(8080).routes(
 * `.headers(headers)`: Defines response `headers`.
 
 ## Requirements
-Mockingbird supports Python 3.7 and above.
+Mimicker supports Python 3.7 and above.
 
 
 ## License
-Mockingbird is released under the MIT License. see the [LICENSE](LICENSE) for more information.
+Mimicker is released under the MIT License. see the [LICENSE](LICENSE) for more information.

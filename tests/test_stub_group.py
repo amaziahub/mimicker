@@ -1,5 +1,5 @@
 from hamcrest import assert_that, none, is_
-from mockingbird.stub_group import StubGroup
+from mimicker.stub_group import StubGroup
 
 
 def test_none_given_no_stubs():
@@ -36,10 +36,10 @@ def test_match_w_path_param():
                    200,
                    {"message": "Hello, {name}!"})
 
-    matched, path_param = stub_group.match("GET", "/hello/mockingbird")
+    matched, path_param = stub_group.match("GET", "/hello/mimicker")
 
     assert_that(matched, is_((200, {"message": "Hello, {name}!"}, None, None)))
-    assert_that(path_param, is_({"name": "mockingbird"}))
+    assert_that(path_param, is_({"name": "mimicker"}))
 
 
 def test_match_stub_with_response_func():

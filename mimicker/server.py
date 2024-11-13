@@ -3,12 +3,12 @@ import logging
 import socketserver
 import threading
 
-from mockingbird.handler import MockingbirdHandler
-from mockingbird.route import Route
-from mockingbird.stub_group import StubGroup
+from mimicker.handler import MimickerHandler
+from mimicker.route import Route
+from mimicker.stub_group import StubGroup
 
 
-class MockingbirdServer:
+class MimickerServer:
     def __init__(self, port: int = 8080):
         self.stub_matcher = StubGroup()
         self.server = socketserver.TCPServer(("", port), self._handler_factory)
@@ -16,7 +16,7 @@ class MockingbirdServer:
         atexit.register(self.shutdown)
 
     def _handler_factory(self, *args):
-        return MockingbirdHandler(self.stub_matcher, *args)
+        return MimickerHandler(self.stub_matcher, *args)
 
     def routes(self, *routes: Route):
         for route in routes:
@@ -32,7 +32,7 @@ class MockingbirdServer:
         return self
 
     def start(self):
-        logging.info("MockingbirdServer starting on port %s",
+        logging.info("MimickerServer starting on port %s",
                      self.server.server_address[1])
         self._thread.start()
         return self
