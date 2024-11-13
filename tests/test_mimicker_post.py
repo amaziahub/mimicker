@@ -1,27 +1,27 @@
 from hamcrest import assert_that, is_, has_entry, equal_to
 
-from mockingbird.mockingbird import post
+from mimicker.mimicker import post
 from tests.support.client import Client
 
 
-def test_post_404(mockingbird_server):
-    mockingbird_server.routes(
+def test_post_404(mimicker_server):
+    mimicker_server.routes(
         post("/submit")
     )
     resp = Client().post_as_json('/not-found')
     assert_that(resp.status_code, is_(404))
 
 
-def test_post_default_200_status_code(mockingbird_server):
-    mockingbird_server.routes(
+def test_post_default_200_status_code(mimicker_server):
+    mimicker_server.routes(
         post("/submit")
     )
     resp = Client().post_as_json('/submit')
     assert_that(resp.status_code, is_(200))
 
 
-def test_post_picked_status_code(mockingbird_server):
-    mockingbird_server.routes(
+def test_post_picked_status_code(mimicker_server):
+    mimicker_server.routes(
         post("/submit").
         status(201)
     )
@@ -29,8 +29,8 @@ def test_post_picked_status_code(mockingbird_server):
     assert_that(resp.status_code, is_(201))
 
 
-def test_post_body_as_text(mockingbird_server):
-    mockingbird_server.routes(
+def test_post_body_as_text(mimicker_server):
+    mimicker_server.routes(
         post('/submit').
         body("submission successful")
     )
@@ -38,9 +38,9 @@ def test_post_body_as_text(mockingbird_server):
     assert_that(resp.text, is_("submission successful"))
 
 
-def test_post_body_as_json(mockingbird_server):
+def test_post_body_as_json(mimicker_server):
     body = {"result": "created"}
-    mockingbird_server.routes(
+    mimicker_server.routes(
         post("/submit").
         body(body).
         status(201)
@@ -50,8 +50,8 @@ def test_post_body_as_json(mockingbird_server):
     assert_that(resp.json(), equal_to(body))
 
 
-def test_post_empty_response(mockingbird_server):
-    mockingbird_server.routes(
+def test_post_empty_response(mimicker_server):
+    mimicker_server.routes(
         post("/clear").
         body(None).
         status(204)
@@ -61,9 +61,9 @@ def test_post_empty_response(mockingbird_server):
     assert_that(resp.text, is_(""))
 
 
-def test_post_body_with_text_content(mockingbird_server):
+def test_post_body_with_text_content(mimicker_server):
     body = "This is a plain text submission."
-    mockingbird_server.routes(
+    mimicker_server.routes(
         post("/submit-text").
         body(body).
         status(200)
@@ -73,9 +73,9 @@ def test_post_body_with_text_content(mockingbird_server):
     assert_that(resp.text, is_(body))
 
 
-def test_post_body_with_json_content(mockingbird_server):
+def test_post_body_with_json_content(mimicker_server):
     body = {"message": "Data submitted"}
-    mockingbird_server.routes(
+    mimicker_server.routes(
         post("/submit-json").
         body(body).
         status(201)
@@ -85,9 +85,9 @@ def test_post_body_with_json_content(mockingbird_server):
     assert_that(resp.json(), equal_to(body))
 
 
-def test_post_file_upload(mockingbird_server):
+def test_post_file_upload(mimicker_server):
     file_content = b"Test file content"
-    mockingbird_server.routes(
+    mimicker_server.routes(
         post("/upload").
         body("File uploaded successfully").
         status(200)

@@ -1,4 +1,4 @@
-name: Mockingbird Tests
+name: Mimicker Tests
 
 on:
   push:

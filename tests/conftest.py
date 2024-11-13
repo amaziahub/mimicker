@@ -1,11 +1,11 @@
 import pytest
 
-from mockingbird.mockingbird import mockingbird
+from mimicker.mimicker import mimicker
 
 
 @pytest.fixture(scope="session")
-def mockingbird_server():
-    server = mockingbird(port=8080)
+def mimicker_server():
+    server = mimicker(port=8080)
 
     yield server
 

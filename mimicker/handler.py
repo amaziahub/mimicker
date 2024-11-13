@@ -2,10 +2,10 @@ import http.server
 import json
 from typing import Any, Tuple, Optional, Dict, Callable, List
 
-from mockingbird.stub_group import StubGroup
+from mimicker.stub_group import StubGroup
 
 
-class MockingbirdHandler(http.server.SimpleHTTPRequestHandler):
+class MimickerHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, stub_matcher: StubGroup, *args, **kwargs):
         self.stub_matcher = stub_matcher
         super().__init__(*args, **kwargs)

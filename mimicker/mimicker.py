@@ -1,7 +1,7 @@
 import logging
 
-from mockingbird.route import Route
-from mockingbird.server import MockingbirdServer
+from mimicker.route import Route
+from mimicker.server import MimickerServer
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
 
@@ -22,6 +22,6 @@ def delete(path: str) -> Route:
     return Route("DELETE", path)
 
 
-def mockingbird(port: int = 8080) -> MockingbirdServer:
-    server = MockingbirdServer(port).start()
+def mimicker(port: int = 8080) -> MimickerServer:
+    server = MimickerServer(port).start()
     return server

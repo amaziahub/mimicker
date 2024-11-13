@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "mockingbird"
+name = "mimicker"
 version = "0.1.0"
 description = "A lightweight HTTP mocking server for Python"
 authors = ["Amazia Gur <amaziagur@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 keywords = ["http", "mocking", "testing", "mock-server", "stubbing", "ci-cd", "http-server", "testing-tools", "stub-server", "purepython"]
-repository = "https://github.com/amaziahub/mockingbird"
-homepage = "https://github.com/amaziahub/mockingbird"
+repository = "https://github.com/amaziahub/mimicker"
+homepage = "https://github.com/amaziahub/mimicker"
 
 [tool.poetry.dependencies]
 python = "^3.7"
