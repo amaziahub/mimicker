@@ -23,9 +23,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install poetry
 
+      - name: Configure Git user
+        run: |
+          git config --local user.email "github-actions@github.com"
+          git config --local user.name "GitHub Actions"
+
       - name: Update version for PyPI release
         run: |
-          poetry version patch
+          poetry version patch  # Increment patch version (e.g., 0.1.0 -> 0.1.1)
           git commit -am "Bump version to $(poetry version -s)"
           git tag "v$(poetry version -s)"
           git push origin --tags
