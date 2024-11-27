@@ -13,6 +13,7 @@
 <div align="center">
 
 [![Mimicker Tests](https://github.com/amaziahub/mimicker/actions/workflows/test.yml/badge.svg)](https://github.com/amaziahub/mimicker/actions/workflows/test.yml)
+[![Codecov Coverage](https://codecov.io/gh/amaziahub/mimicker/branch/main/graph/badge.svg?token=YOUR_CODECOV_TOKEN)](https://codecov.io/gh/amaziahub/mimicker)
 [![License](http://img.shields.io/:license-apache2.0-red.svg)](http://doge.mit-license.org)
 ![Poetry](https://img.shields.io/badge/managed%20with-poetry-blue)
 
