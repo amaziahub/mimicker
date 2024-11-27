@@ -2,7 +2,7 @@
 
 test:
 	@echo "Running tests..."
-	poetry run pytest
+	poetry run pytest --cov=mimicker --cov-report=xml --cov-report=html
 
 
 install:
