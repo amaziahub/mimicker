@@ -30,18 +30,20 @@ class StubGroup:
         matched_stub = None
         path_params = {}
 
-        for compiled_path, (status_code, response, response_func, headers)\
+        for compiled_path, (status_code, response, response_func, headers) \
                 in self.stubs.get(method, {}).items():
             match = compiled_path.match(path)
             if match:
+                headers_included = True
                 if headers and request_headers:
                     headers_included = all(
                         header_name in request_headers
                         and request_headers[header_name] == header_value
                         for header_name, header_value in headers
                     )
-                    if not headers_included:
-                        continue
+
+                if headers and not headers_included:
+                    pass
 
                 matched_stub = (status_code, response, response_func, headers)
                 path_params = match.groupdict()
