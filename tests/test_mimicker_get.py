@@ -78,4 +78,4 @@ def test_get_headers(mimicker_server):
         headers([("Content-Type", "text/plain")])
     )
     resp = Client().get('/hello', {"Content-Type": "application/json"})
-    assert_that(resp.status_code, is_(404))
+    assert_that(resp.status_code, is_(200))

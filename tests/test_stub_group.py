@@ -1,4 +1,5 @@
 from hamcrest import assert_that, none, is_
+
 from mimicker.stub_group import StubGroup
 
 
@@ -54,7 +55,7 @@ def test_match_stub_with_response_func():
     assert_that(matched, is_((200, {}, dynamic_response, None)))
 
 
-def test_no_match_given_unexpected_header():
+def test_match_given_unexpected_header():
     stub_group = StubGroup()
     stub_group.add(
         "GET", "/hi", 200,
@@ -62,10 +63,11 @@ def test_no_match_given_unexpected_header():
     matched, _ = stub_group.match(
         "GET", "/hi",
         request_headers={"Content-Type": "application/json"})
-    assert_that(matched, none())
+    assert_that(matched, is_((200, {'message': 'hello'}, None,
+                              [('Content-Type', 'text/plain')])))
 
 
-def test_match_given_expected_headers():
+def test_match_given_partial_expected_headers():
     stub_group = StubGroup()
     stub_group.add("GET", "/hi", 200,
                    {"message": "hello"},
@@ -77,4 +79,8 @@ def test_match_given_expected_headers():
     matched, _ = stub_group.match(
         "GET", "/hi",
         request_headers={"Content-Type": "application/json"})
-    assert_that(matched, none())
+    assert_that(matched, is_((200, {'message': 'hello'},
+                              None, [
+                                  ('Content-Type', 'application/json'),
+                                  ('Authorization', 'Bearer YOUR_TOKEN'),
+                                  ('Custom-Header', 'CustomValue')])))
