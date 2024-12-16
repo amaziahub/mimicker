@@ -1,0 +1,476 @@
+
+        <html>
+        <head>
+            <title>Routes and Requests Report</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f9;
+                    color: #333;
+                    margin: 20px;
+                }
+                h1 {
+                    color: #4CAF50;
+                    text-align: center;
+                }
+                ul {
+                    list-style-type: none;
+                    padding: 0;
+                }
+                li {
+                    margin-bottom: 20px;
+                }
+                .route {
+                    font-size: 22px;
+                    font-weight: bold;
+                    color: #2c3e50;
+                    margin-bottom: 10px;
+                    cursor: pointer;
+                }
+                .method-group {
+                    background-color: #ecf0f1;
+                    border-radius: 5px;
+                    padding: 10px;
+                    margin-bottom: 10px;
+                    display: none;
+                }
+                .method-title {
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: #2980b9;
+                    cursor: pointer;
+                }
+                .hit-count {
+                    font-size: 14px;
+                    color: #27ae60;
+                    font-weight: normal;
+                }
+                .request-log {
+                    background-color: #fff;
+                    border-radius: 5px;
+                    padding: 10px;
+                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                    margin-bottom: 10px;
+                }
+                .log-item {
+                    padding: 8px;
+                    border-bottom: 1px solid #ddd;
+                }
+                .log-item:last-child {
+                    border-bottom: none;
+                }
+                .timestamp {
+                    color: #888;
+                    font-size: 14px;
+                }
+                .method {
+                    font-weight: bold;
+                    color: #2980b9;
+                }
+                .body {
+                    font-style: italic;
+                    color: #7f8c8d;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Routes and Requests Report</h1>
+            <ul>
+        <li><div class='route' onclick='toggleMethodGroup("/not-found")'>/not-found</div>
+                <div class='method-group' id='/not-found_DELETE'>
+                    <div class='method-title' onclick='toggleMethodLogs("/not-found_DELETE")'>
+                        DELETE <span class='hit-count'>Hits: 1</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>DELETE</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class='method-group' id='/not-found_GET'>
+                    <div class='method-title' onclick='toggleMethodLogs("/not-found_GET")'>
+                        GET <span class='hit-count'>Hits: 1</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>GET</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class='method-group' id='/not-found_POST'>
+                    <div class='method-title' onclick='toggleMethodLogs("/not-found_POST")'>
+                        POST <span class='hit-count'>Hits: 1</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>POST</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class='method-group' id='/not-found_PUT'>
+                    <div class='method-title' onclick='toggleMethodLogs("/not-found_PUT")'>
+                        PUT <span class='hit-count'>Hits: 1</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>PUT</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                </li><li><div class='route' onclick='toggleMethodGroup("/remove")'>/remove</div>
+                <div class='method-group' id='/remove_DELETE'>
+                    <div class='method-title' onclick='toggleMethodLogs("/remove_DELETE")'>
+                        DELETE <span class='hit-count'>Hits: 3</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>DELETE</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>DELETE</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>DELETE</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                </li><li><div class='route' onclick='toggleMethodGroup("/hello")'>/hello</div>
+                <div class='method-group' id='/hello_GET'>
+                    <div class='method-title' onclick='toggleMethodLogs("/hello_GET")'>
+                        GET <span class='hit-count'>Hits: 5</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>GET</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>GET</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>GET</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>GET</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>GET</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                </li><li><div class='route' onclick='toggleMethodGroup("/hello/world")'>/hello/world</div>
+                <div class='method-group' id='/hello/world_GET'>
+                    <div class='method-title' onclick='toggleMethodLogs("/hello/world_GET")'>
+                        GET <span class='hit-count'>Hits: 1</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>GET</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                </li><li><div class='route' onclick='toggleMethodGroup("/empty")'>/empty</div>
+                <div class='method-group' id='/empty_GET'>
+                    <div class='method-title' onclick='toggleMethodLogs("/empty_GET")'>
+                        GET <span class='hit-count'>Hits: 1</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>GET</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                </li><li><div class='route' onclick='toggleMethodGroup("/submit")'>/submit</div>
+                <div class='method-group' id='/submit_POST'>
+                    <div class='method-title' onclick='toggleMethodLogs("/submit_POST")'>
+                        POST <span class='hit-count'>Hits: 4</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>POST</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>POST</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>POST</span> - 
+                        <span class='body'>submission successful</span></div>
+                    </li>
+                    
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>POST</span> - 
+                        <span class='body'>{
+  "result": "created"
+}</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                </li><li><div class='route' onclick='toggleMethodGroup("/clear")'>/clear</div>
+                <div class='method-group' id='/clear_POST'>
+                    <div class='method-title' onclick='toggleMethodLogs("/clear_POST")'>
+                        POST <span class='hit-count'>Hits: 1</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>POST</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class='method-group' id='/clear_PUT'>
+                    <div class='method-title' onclick='toggleMethodLogs("/clear_PUT")'>
+                        PUT <span class='hit-count'>Hits: 1</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:24</span> - 
+                        <span class='method'>PUT</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                </li><li><div class='route' onclick='toggleMethodGroup("/submit-text")'>/submit-text</div>
+                <div class='method-group' id='/submit-text_POST'>
+                    <div class='method-title' onclick='toggleMethodLogs("/submit-text_POST")'>
+                        POST <span class='hit-count'>Hits: 1</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>POST</span> - 
+                        <span class='body'>This is a plain text submission.</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                </li><li><div class='route' onclick='toggleMethodGroup("/submit-json")'>/submit-json</div>
+                <div class='method-group' id='/submit-json_POST'>
+                    <div class='method-title' onclick='toggleMethodLogs("/submit-json_POST")'>
+                        POST <span class='hit-count'>Hits: 1</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>POST</span> - 
+                        <span class='body'>{
+  "message": "Data submitted"
+}</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                </li><li><div class='route' onclick='toggleMethodGroup("/upload")'>/upload</div>
+                <div class='method-group' id='/upload_POST'>
+                    <div class='method-title' onclick='toggleMethodLogs("/upload_POST")'>
+                        POST <span class='hit-count'>Hits: 1</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>POST</span> - 
+                        <span class='body'>--a2ac8fc9df81b6df07a13f0a9f0eaffc
+Content-Disposition: form-data; name="file"; filename="test_file.txt"
+
+Test file content
+--a2ac8fc9df81b6df07a13f0a9f0eaffc--
+</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                </li><li><div class='route' onclick='toggleMethodGroup("/update")'>/update</div>
+                <div class='method-group' id='/update_PUT'>
+                    <div class='method-title' onclick='toggleMethodLogs("/update_PUT")'>
+                        PUT <span class='hit-count'>Hits: 4</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>PUT</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:23</span> - 
+                        <span class='method'>PUT</span> - 
+                        <span class='body'>null</span></div>
+                    </li>
+                    
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:24</span> - 
+                        <span class='method'>PUT</span> - 
+                        <span class='body'>update successful</span></div>
+                    </li>
+                    
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:24</span> - 
+                        <span class='method'>PUT</span> - 
+                        <span class='body'>{
+  "result": "updated"
+}</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                </li><li><div class='route' onclick='toggleMethodGroup("/update-text")'>/update-text</div>
+                <div class='method-group' id='/update-text_PUT'>
+                    <div class='method-title' onclick='toggleMethodLogs("/update-text_PUT")'>
+                        PUT <span class='hit-count'>Hits: 1</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:24</span> - 
+                        <span class='method'>PUT</span> - 
+                        <span class='body'>This is an update with plain text.</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                </li><li><div class='route' onclick='toggleMethodGroup("/update-json")'>/update-json</div>
+                <div class='method-group' id='/update-json_PUT'>
+                    <div class='method-title' onclick='toggleMethodLogs("/update-json_PUT")'>
+                        PUT <span class='hit-count'>Hits: 1</span>
+                    </div>
+                    <div class='request-log'>
+                        <ul>
+                
+                    <li class='log-item'>
+                        <div><span class='timestamp'>2024-12-16 13:47:24</span> - 
+                        <span class='method'>PUT</span> - 
+                        <span class='body'>{
+  "message": "Updated successfully"
+}</span></div>
+                    </li>
+                    
+                        </ul>
+                    </div>
+                </div>
+                </li>
+            </ul>
+
+            <script>
+            // Function to toggle visibility of method groups (GET, POST, etc.)
+            function toggleMethodGroup(route) {
+                var groups = document.querySelectorAll('.method-group');
+                groups.forEach(function(group) {
+                    if (group.id.startsWith(route)) {
+                        group.style.display = group.style.display === 'block' ? 'none' : 'block';
+                    }
+                });
+            }
+
+            // Function to toggle visibility of logs under each method
+            function toggleMethodLogs(groupId) {
+                var methodGroup = document.getElementById(groupId);
+                methodGroup.style.display = methodGroup.style.display === 'block' ? 'none' : 'block';
+            }
+
+            </script>
+        </body>
+        </html>
+        

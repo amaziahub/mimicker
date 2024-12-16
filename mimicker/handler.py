@@ -2,12 +2,14 @@ import http.server
 import json
 from typing import Any, Tuple, Optional, Dict, Callable, List
 
+from mimicker.request_log import RequestLog
 from mimicker.stub_group import StubGroup
 
 
 class MimickerHandler(http.server.SimpleHTTPRequestHandler):
-    def __init__(self, stub_matcher: StubGroup, *args, **kwargs):
+    def __init__(self, stub_matcher: StubGroup, request_logs: Dict[str, List[RequestLog]], *args, **kwargs):
         self.stub_matcher = stub_matcher
+        self.request_logs = request_logs
         super().__init__(*args, **kwargs)
 
     def do_GET(self):
@@ -28,10 +30,29 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
             method, self.path, request_headers=request_headers
         )
 
+        body = None
+        if method in ["POST", "PUT"]:
+            body = self._get_request_body()
+
+        RequestLog.log_request(self.request_logs, method, self.path, body)
+
         if matched_stub:
             self._send_response(matched_stub, path_params)
         else:
             self._send_404_response(method)
+
+    def _get_request_body(self):
+        """Read the body of the request for POST and PUT requests."""
+        content_length = int(self.headers.get('Content-Length', 0))
+        if content_length > 0:
+            body = self.rfile.read(content_length)
+            try:
+                # Try to parse as JSON if the body is JSON
+                return json.loads(body)
+            except json.JSONDecodeError:
+                # If it's not JSON, return as a string
+                return body.decode('utf-8')
+        return None
 
     def _send_response(
             self,
