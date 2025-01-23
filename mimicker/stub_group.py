@@ -20,8 +20,8 @@ class StubGroup:
             self.stubs[method] = {}
 
         if isinstance(pattern, str):
-            pattern = re.compile(f"^{re.sub(r'\\{(\\w+)\\}',
-                                            r'(?P<\\1>[^/]+)', pattern)}$")
+            substituted_pattern = re.sub(r'\{(\w+)\}', r'(?P<\1>[^/]+)', pattern)
+            pattern = re.compile(f"^{substituted_pattern}$")
 
         self.stubs[method][pattern] = (status_code, response, response_func, headers)
 
