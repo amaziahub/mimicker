@@ -1,15 +1,20 @@
 import re
-from typing import Pattern, Dict, Tuple, Any, Optional, Callable, Union, List
+from typing import Pattern, Dict, Tuple, Any, Optional, Callable, Union, List, NamedTuple
+
+
+class Stub(NamedTuple):
+    status_code: int
+    delay: float
+    response: Any
+    response_func: Optional[Callable]
+    headers: Optional[List[Tuple[str, str]]]
 
 
 class StubGroup:
     def __init__(self):
         self.stubs: Dict[
             str,
-            Dict[
-                Pattern,
-                Tuple[int, float, Any, Optional[Callable], Optional[List[Tuple[str, str]]]]
-            ]
+            Dict[Pattern, Stub]
         ] = {}
 
     def add(self, method: str, pattern: Union[str, Pattern],
@@ -23,10 +28,10 @@ class StubGroup:
             substituted_pattern = re.sub(r'\{(\w+)\}', r'(?P<\1>[^/]+)', pattern)
             pattern = re.compile(f"^{substituted_pattern}$")
 
-        self.stubs[method][pattern] = (status_code, delay, response, response_func, headers)
+        self.stubs[method][pattern] = Stub(status_code, delay, response, response_func, headers)
 
     def match(self, method: str, path: str,
-              request_headers: Optional[Dict[str, str]] = None):
+              request_headers: Optional[Dict[str, str]] = None) -> Tuple[Stub, Dict[str, str]]:
         matched_stub = None
         path_params = {}
 
@@ -45,7 +50,7 @@ class StubGroup:
                 if headers and not headers_included:
                     pass
 
-                matched_stub = (status_code, delay, response, response_func, headers)
+                matched_stub = Stub(status_code, delay, response, response_func, headers)
                 path_params = match.groupdict()
                 break
 

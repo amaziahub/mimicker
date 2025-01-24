@@ -1,9 +1,9 @@
 import http.server
 import json
 from time import sleep
-from typing import Any, Tuple, Optional, Dict, Callable, List
+from typing import Any, Tuple, Optional, Dict, List
 
-from mimicker.stub_group import StubGroup
+from mimicker.stub_group import Stub, StubGroup
 
 
 class MimickerHandler(http.server.SimpleHTTPRequestHandler):
@@ -34,13 +34,7 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
         else:
             self._send_404_response(method)
 
-    def _send_response(
-            self,
-            matched_stub: Tuple[
-                int, float, Any, Optional[Callable], Optional[List[Tuple[str, str]]]
-            ],
-            path_params: Dict[str, str]
-    ):
+    def _send_response(self, matched_stub: Stub, path_params: Dict[str, str]):
         status_code, delay, response, response_func, headers = matched_stub
         if delay > 0:
             sleep(delay)
