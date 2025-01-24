@@ -6,8 +6,8 @@ class Client:
     def __init__(self, root='http://localhost:8080'):
         self.root = root
 
-    def get(self, path, headers=None):
-        return requests.get(f"{self.root + path}", headers=headers)
+    def get(self, path, headers=None, **kwargs):
+        return requests.get(f"{self.root + path}", headers=headers, **kwargs)
 
     def post_as_json(self, path, body=None, headers=None):
         return requests.post(f"{self.root + path}", json=body, headers=headers)

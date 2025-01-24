@@ -8,12 +8,12 @@ class StubGroup:
             str,
             Dict[
                 Pattern,
-                Tuple[int, Any, Optional[Callable], Optional[List[Tuple[str, str]]]]
+                Tuple[int, float, Any, Optional[Callable], Optional[List[Tuple[str, str]]]]
             ]
         ] = {}
 
     def add(self, method: str, pattern: Union[str, Pattern],
-            status_code: int, response: Any,
+            status_code: int, response: Any, delay: Optional[float] = 0,
             response_func: Optional[Callable[[], Tuple[int, Any]]] = None,
             headers: Optional[List[Tuple[str, str]]] = None):
         if method not in self.stubs:
@@ -23,14 +23,14 @@ class StubGroup:
             substituted_pattern = re.sub(r'\{(\w+)\}', r'(?P<\1>[^/]+)', pattern)
             pattern = re.compile(f"^{substituted_pattern}$")
 
-        self.stubs[method][pattern] = (status_code, response, response_func, headers)
+        self.stubs[method][pattern] = (status_code, delay, response, response_func, headers)
 
     def match(self, method: str, path: str,
               request_headers: Optional[Dict[str, str]] = None):
         matched_stub = None
         path_params = {}
 
-        for compiled_path, (status_code, response, response_func, headers) \
+        for compiled_path, (status_code, delay, response, response_func, headers) \
                 in self.stubs.get(method, {}).items():
             match = compiled_path.match(path)
             if match:
@@ -45,7 +45,7 @@ class StubGroup:
                 if headers and not headers_included:
                     pass
 
-                matched_stub = (status_code, response, response_func, headers)
+                matched_stub = (status_code, delay, response, response_func, headers)
                 path_params = match.groupdict()
                 break
 

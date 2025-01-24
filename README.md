@@ -162,6 +162,25 @@ mimicker(8080).routes(
 # The response will be: {"message": "Hello, JSON!"}
 ```
 
+#### Delaying the response
+
+This is useful when testing how your code handles timeouts when calling a web API.
+
+```python
+mimicker_server.routes(
+    get("/wait").
+    delay(0.5).
+    body("the client should have timed out")
+)
+try:
+    resp = requests.get("http://localhost:8080/wait", timeout=0.2)
+except requests.exceptions.ReadTimeout as error:
+    print(f"the API is unreachable due to error: {error=}")
+else:
+    # do things with the response
+    ...
+```
+
 #### Supporting Other Body Types (Text, Files, etc.)
 
 In addition to JSON bodies, Mimicker supports other types of content for the response body. Here's how you can return
@@ -204,6 +223,7 @@ mimicker(8080).routes(
 * `post(path)`: Defines a `POST` endpoint.
 * `put(path)`: Defines a `PUT` endpoint.
 * `delete(path)`: Defines a `DELETE` endpoint.
+* `.delay(duration)`: Defines the delay in seconds waited before returning the response (optional, 0. by default).
 * `.body(content)`: Defines the response `body`.
 * `.status(code)`: Defines the response `status code`.
 * `.headers(headers)`: Defines response `headers`.

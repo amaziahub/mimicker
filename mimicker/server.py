@@ -25,6 +25,7 @@ class MimickerServer:
                 method=route_config["method"],
                 pattern=route_config["compiled_path"],
                 status_code=route_config["status"],
+                delay=route_config["delay"],
                 response=route_config["body"],
                 headers=route_config["headers"],
                 response_func=route_config["response_func"]
