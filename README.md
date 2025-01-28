@@ -211,6 +211,24 @@ mimicker(8080).routes(
 ## Requirements
 Mimicker supports Python 3.7 and above.
 
+---
+
+### Get in touch
+
+You are welcome to report 🐞 or  [issues](https://github.com/amaziahub/mimicker/issues),
+upvote 👍 [feature requests](https://github.com/users/amaziahub/projects/1),
+or 🗣️ discuss features and ideas @ [slack community](https://join.slack.com/t/mimicker/shared_invite/zt-2yr7vubw4-8Y09YyxZ5j~G2tlQ5uOXKw)
+
+
+### Contributors
+
+I'm thankful to all the people who have contributed to this project.
+
+<a href="https://github.com/amaziahub/mimicker/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=amaziahub/mimicker" />
+</a>
+
+
 
 ## License
 Mimicker is released under the MIT License. see the [LICENSE](LICENSE) for more information.
