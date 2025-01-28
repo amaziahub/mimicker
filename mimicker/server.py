@@ -4,13 +4,23 @@ import socketserver
 import threading
 
 from mimicker.handler import MimickerHandler
+from mimicker.report_generator import ReportGenerator
 from mimicker.request_log import RequestLog
 from mimicker.route import Route
 from mimicker.stub_group import StubGroup
 
 
+def dump_report(raw_data, path="mimicker_log_report.html"):
+    with open(path, "w") as f:
+        f.write(raw_data)
+
+
 class MimickerServer:
     def __init__(self, port: int = 8080):
+        self.report_generator = None
+        self.report_format = None
+        self.report_path = None
+        self.reporting_enabled = False
         self.stub_matcher = StubGroup()
         self.request_logs = {}
         self.server = socketserver.TCPServer(("", port), self._handler_factory)
@@ -33,6 +43,13 @@ class MimickerServer:
             )
         return self
 
+    def enable_reporting(self, format="html", path="report.html"):
+        self.reporting_enabled = True
+        self.report_format = format
+        self.report_path = path
+        self.report_generator = ReportGenerator(format, path)
+        return self
+
     def start(self):
         logging.info("MimickerServer starting on port %s",
                      self.server.server_address[1])
@@ -40,9 +57,8 @@ class MimickerServer:
         return self
 
     def shutdown(self):
-        html_report = RequestLog.generate_html_report(self.request_logs)
-        with open("request_log_report.html", "w") as f:
-            f.write(html_report)
+        if self.enable_reporting:
+            dump_report(self.report_generator.generate(self.request_logs), self.report_path)
         self.server.shutdown()
         if self._thread.is_alive():
             self._thread.join()
