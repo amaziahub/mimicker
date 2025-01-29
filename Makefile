@@ -8,3 +8,7 @@ test:
 install:
 	@echo "Installing dependencies..."
 	poetry install
+
+activate:
+	@echo "activate poetry env"
+	poetry shell
