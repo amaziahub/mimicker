@@ -175,7 +175,7 @@ mimicker_server.routes(
 try:
     resp = requests.get("http://localhost:8080/wait", timeout=0.2)
 except requests.exceptions.ReadTimeout as error:
-    print(f"the API is unreachable due to error: {error=}")
+    print(f"the API is unreachable due to request timeout: {error=}")
 else:
     # do things with the response
     ...
