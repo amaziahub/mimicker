@@ -8,7 +8,7 @@ class Route:
         self.method = method
         self.path = path
         self._body = {}
-        self._delay = 0
+        self._delay = 0.
         self._status = 200
         self._headers: List[Tuple[str, str]] = []
         self._response_func: Optional[Callable[[], Tuple[int, Any]]] = None
