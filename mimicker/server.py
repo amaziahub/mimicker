@@ -7,13 +7,13 @@ from mimicker.handler import MimickerHandler
 from mimicker.route import Route
 from mimicker.stub_group import StubGroup
 
-class ReusableAddressTCPServer(socketserver.TCPServer):
+class ReusableAddressThreadingTCPServer(socketserver.ThreadingTCPServer):
     allow_reuse_address = True
 
 class MimickerServer:
     def __init__(self, port: int = 8080):
         self.stub_matcher = StubGroup()
-        self.server = ReusableAddressTCPServer(("", port), self._handler_factory)
+        self.server = ReusableAddressThreadingTCPServer(("", port), self._handler_factory)
         self._thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         atexit.register(self.shutdown)
 
@@ -41,6 +41,7 @@ class MimickerServer:
         return self
 
     def shutdown(self):
+        self.server.server_close()
         self.server.shutdown()
         if self._thread.is_alive():
             self._thread.join()
