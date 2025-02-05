@@ -32,8 +32,3 @@ def mimicker(port: int = 8080) -> MimickerServer:
     server = MimickerServer(port).start()
     return server
 
-# Example usage:
-get_route = create_route("GET", "/example-get")
-post_route = create_route("POST", "/example-post")
-put_route = create_route("PUT", "/example-put")
-delete_route = create_route("DELETE", "/example-delete")
