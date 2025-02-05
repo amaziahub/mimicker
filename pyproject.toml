@@ -11,12 +11,11 @@ homepage = "https://github.com/amaziahub/mimicker"
 
 [tool.poetry.dependencies]
 python = "^3.7"
-requests = "^2.0"
-
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0"
 PyHamcrest = "^2.0"
+requests = "^2.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest-cov = "<3.0"

@@ -8,6 +8,7 @@ class Route:
         self.method = method
         self.path = path
         self._body = {}
+        self._delay = 0.
         self._status = 200
         self._headers: List[Tuple[str, str]] = []
         self._response_func: Optional[Callable[[], Tuple[int, Any]]] = None
@@ -16,6 +17,13 @@ class Route:
         parameterized_path = re.sub(r'\\{(\w+)\\}',
                                     r'(?P<\1>[^/]+)', escaped_path)
         self._compiled_path: Pattern = re.compile(f"^{parameterized_path}$")
+
+    def delay(self, delay: float):
+        """
+        Sets the delay (in seconds) to wait before returning the response
+        """
+        self._delay = delay
+        return self
 
     def body(self, response: Union[Dict[str, Any], str] = None):
         self._body = response if response is not None else ""
@@ -38,6 +46,7 @@ class Route:
             "method": self.method,
             "path": self.path,
             "compiled_path": self._compiled_path,
+            "delay": self._delay,
             "body": self._body,
             "status": self._status,
             "headers": self._headers,

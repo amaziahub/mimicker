@@ -7,6 +7,7 @@ def test_route_initialization():
     route = Route("GET", "/hello")
     assert_that(route.method, equal_to("GET"))
     assert_that(route.path, equal_to("/hello"))
+    assert_that(route._delay, equal_to(0))
     assert_that(route._status, equal_to(200))
     assert_that(route._body, equal_to({}))
 
@@ -30,12 +31,14 @@ def test_route_with_path_parameter():
 
 def test_route_build():
     route = (Route("GET", "/hello/{greet}")
+             .delay(2)
              .body({"message": "Hello, {greet}!"})
              .status(201))
     route_config = route.build()
 
     assert_that(route_config["method"], equal_to("GET"))
     assert_that(route_config["path"], equal_to("/hello/{greet}"))
+    assert_that(route_config["delay"], equal_to(2))
     assert_that(route_config["status"], equal_to(201))
     assert_that(route_config["body"], equal_to({"message": "Hello, {greet}!"}))
     assert_that(route_config["compiled_path"], instance_of(re.Pattern))
