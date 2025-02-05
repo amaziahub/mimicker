@@ -4,43 +4,36 @@ from mimicker.server import MimickerServer
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
 
-
-def get(path: str) -> Route:
+def create_route(method: str, path: str) -> Route:
     """
-    Create a GET route for the given path.
-    """
-    logging.info(f"Creating GET route for path: {path}")
-    return Route("GET", path)
+    Create a route for the specified HTTP method and path.
 
+    Args:
+        method (str): The HTTP method (e.g., 'GET', 'POST', 'PUT', 'DELETE').
+        path (str): The path for the route.
 
-def post(path: str) -> Route:
+    Returns:
+        Route: The created route.
     """
-    Create a POST route for the given path.
-    """
-    logging.info(f"Creating POST route for path: {path}")
-    return Route("POST", path)
-
-
-def put(path: str) -> Route:
-    """
-    Create a PUT route for the given path.
-    """
-    logging.info(f"Creating PUT route for path: {path}")
-    return Route("PUT", path)
-
-
-def delete(path: str) -> Route:
-    """
-    Create a DELETE route for the given path.
-    """
-    logging.info(f"Creating DELETE route for path: {path}")
-    return Route("DELETE", path)
-
+    logging.info(f"Creating {method} route for path: {path}")
+    return Route(method, path)
 
 def mimicker(port: int = 8080) -> MimickerServer:
     """
     Start the Mimicker server on the specified port.
+
+    Args:
+        port (int, optional): The port to start the server on. Defaults to 8080.
+
+    Returns:
+        MimickerServer: The started Mimicker server instance.
     """
     logging.info(f"Starting Mimicker server on port: {port}")
     server = MimickerServer(port).start()
     return server
+
+# Example usage:
+get_route = create_route("GET", "/example-get")
+post_route = create_route("POST", "/example-post")
+put_route = create_route("PUT", "/example-put")
+delete_route = create_route("DELETE", "/example-delete")
