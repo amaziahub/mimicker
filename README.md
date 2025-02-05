@@ -167,7 +167,10 @@ mimicker(8080).routes(
 This is useful when testing how your code handles timeouts when calling a web API.
 
 ```python
-mimicker_server.routes(
+from mimicker.mimicker import mimicker, get
+import requests
+
+mimicker(8080).routes(
     get("/wait").
     delay(0.5).
     body("the client should have timed out")
