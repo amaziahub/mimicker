@@ -88,6 +88,7 @@ def test_get_headers(mimicker_server):
     resp = Client().get('/hello', {"Content-Type": "application/json"})
     assert_that(resp.status_code, is_(200))
 
+
 @mark.parametrize(
     "delay_in_seconds",
     [0.1, 0.2, 0.5],
@@ -108,6 +109,7 @@ def test_get_with_delay(mimicker_server, delay_in_seconds: float):
     assert_that(duration_seconds, is_(greater_than_or_equal_to(delay_in_seconds)))
     assert_that(duration_seconds, is_(close_to(delay_in_seconds, 0.05)))
 
+
 def test_get_with_timedout_delay(mimicker_server):
     mimicker_server.routes(
         get("/wait").
@@ -118,7 +120,8 @@ def test_get_with_timedout_delay(mimicker_server):
     with raises(ReadTimeout) as error:
         Client().get('/wait', timeout=0.05)
 
-    assert_that(str(error.value), is_("HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=0.05)"))
+    assert_that(str(error.value),
+                is_("HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=0.05)"))
 
 
 def _call_route_and_measure_duration(client: Client, route: str) -> float:

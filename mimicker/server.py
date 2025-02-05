@@ -7,8 +7,10 @@ from mimicker.handler import MimickerHandler
 from mimicker.route import Route
 from mimicker.stub_group import StubGroup
 
+
 class ReusableAddressThreadingTCPServer(socketserver.ThreadingTCPServer):
     allow_reuse_address = True
+
 
 class MimickerServer:
     def __init__(self, port: int = 8080):

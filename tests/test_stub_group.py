@@ -42,6 +42,7 @@ def test_match_w_path_param():
     assert_that(matched, is_((200, 0., {"message": "Hello, {name}!"}, None, None)))
     assert_that(path_param, is_({"name": "mimicker"}))
 
+
 def test_match_w_delay():
     stub_group = StubGroup()
     stub_group.add("GET", "/hi", 200, {"message": "hello"}, delay=3.)
