@@ -248,9 +248,8 @@ or 🗣️ discuss features and ideas @ [slack community](https://join.slack.com
 I'm thankful to all the people who have contributed to this project.
 
 <a href="https://github.com/amaziahub/mimicker/graphs/contributors">
-<img src="https://contrib.rocks/image?repo=amaziahub/mimicker" />
+  <img src="https://contrib.rocks/image?repo=amaziahub/mimicker" />
 </a>
-
 
 
 ## License
