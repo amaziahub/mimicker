@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mimicker"
-version = "2.0.2"
+version = "2.0.3"
 description = "A lightweight HTTP mocking server for Python"
 authors = ["Amazia Gur <amaziagur@gmail.com>"]
 license = "MIT"
