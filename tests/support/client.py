@@ -39,3 +39,12 @@ class Client:
 
     def delete(self, path, headers=None, **kwargs):
         return requests.delete(f"{self.root + path}", headers=headers, **kwargs)
+
+    def patch(self, path, **kwargs):
+        return requests.patch(f"{self.root + path}", **kwargs)
+
+    def patch_as_json(self, path, body, **kwargs):
+        return requests.patch(f"{self.root + path}", json=body, **kwargs)
+
+    def patch_as_text(self, path, body, **kwargs):
+        return requests.patch(f"{self.root + path}", data=body, headers={"Content-Type": "text/plain"}, **kwargs)
