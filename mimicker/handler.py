@@ -28,21 +28,22 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
 
     def _handle_request(self, method: str):
         request_headers = {key.lower(): value for key, value in self.headers.items()}
+        request_body = self._get_request_body()
         matched_stub, path_params = self.stub_matcher.match(
             method, self.path, request_headers=request_headers
         )
 
         if matched_stub:
-            self._send_response(matched_stub, path_params)
+            self._send_response(matched_stub, path_params, request_body, request_headers)
         else:
             self._send_404_response(method)
 
-    def _send_response(self, matched_stub: Stub, path_params: Dict[str, str]):
+    def _send_response(self, matched_stub: Stub, path_params: Dict[str, str], request_body: Any, request_headers: Dict[str, str]):
         status_code, delay, response, response_func, headers = matched_stub
         if delay > 0:
             sleep(delay)
         if response_func:
-            status_code, response = response_func()
+            status_code, response = response_func(payload=request_body, headers=request_headers, params=path_params)
 
         self.send_response(status_code)
         self._set_headers(headers)
@@ -77,3 +78,14 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
     def _format_response(response: dict, path_params: dict):
         return {k: (v.format(**path_params) if isinstance(v, str) else v)
                 for k, v in response.items()}
+
+    def _get_request_body(self) -> Optional[dict]:
+        content_length = self.headers.get('content-length')
+        if content_length:
+            try:
+                length = int(content_length)
+                body = self.rfile.read(length).decode('utf-8')
+                return json.loads(body) if body else None
+            except (ValueError, json.JSONDecodeError):
+                return None
+        return None
