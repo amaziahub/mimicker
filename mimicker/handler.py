@@ -23,6 +23,9 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
     def do_DELETE(self):
         self._handle_request("DELETE")
 
+    def do_PATCH(self):
+        self._handle_request("PATCH")
+
     def _handle_request(self, method: str):
         request_headers = {key.lower(): value for key, value in self.headers.items()}
         matched_stub, path_params = self.stub_matcher.match(

@@ -226,6 +226,7 @@ mimicker(8080).routes(
 * `post(path)`: Defines a `POST` endpoint.
 * `put(path)`: Defines a `PUT` endpoint.
 * `delete(path)`: Defines a `DELETE` endpoint.
+* `patch(path)`: Defines a `PATCH` endpoint.
 * `.delay(duration)`: Defines the delay in seconds waited before returning the response (optional, 0. by default).
 * `.body(content)`: Defines the response `body`.
 * `.status(code)`: Defines the response `status code`.
