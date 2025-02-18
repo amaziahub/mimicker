@@ -21,7 +21,7 @@ class Route:
         self._delay = 0.
         self._status = 200
         self._headers: List[Tuple[str, str]] = []
-        self._response_func: Optional[Callable[[], Tuple[int, Any]]] = None
+        self._response_func: Optional[Callable[..., Tuple[int, Any]]] = None
 
         escaped_path = re.escape(path)
         parameterized_path = re.sub(r'\\{(\w+)\\}',
@@ -81,12 +81,12 @@ class Route:
         self._headers = headers
         return self
 
-    def response_func(self, func: Callable[[], Tuple[int, Any]]):
+    def response_func(self, func: Callable[..., Tuple[int, Any]]):
         """
         Sets a custom response function for dynamic responses.
 
         Args:
-            func (Callable[[], Tuple[int, Any]]): A function returning a tuple (status_code, response_body).
+            func (Callable[..., Tuple[int, Any]]): A function that returns (status_code, response_body).
 
         Returns:
             Route: The current Route instance (for method chaining).

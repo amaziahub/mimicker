@@ -1,3 +1,5 @@
+import json
+
 from hamcrest import assert_that, is_, has_entry, equal_to
 
 from mimicker.mimicker import post
@@ -48,6 +50,20 @@ def test_post_body_as_json(mimicker_server):
     resp = Client().post_as_json('/submit', body=body)
     assert_that(resp.headers, has_entry("Content-Type", "application/json"))
     assert_that(resp.json(), equal_to(body))
+
+
+def test_post_reuse_request_body(mimicker_server):
+    def response_func(**kwargs):
+        payload = kwargs.get("payload")
+        return 202, {"my_counter": 1 + payload.get('counter')}
+
+    body = {"counter": 1}
+    mimicker_server.routes(
+        post("/bump_counter").response_func(response_func)
+    )
+    resp = Client().post_as_json('/bump_counter', body=body)
+    assert_that(resp.status_code, equal_to(202))
+    assert_that(resp.json(), equal_to({"my_counter": 2}))
 
 
 def test_post_empty_response(mimicker_server):

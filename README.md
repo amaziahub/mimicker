@@ -220,6 +220,33 @@ mimicker(8080).routes(
 
 ```
 
+### Dynamic Responses with `response_func`
+
+Mimicker allows dynamic responses based on the request data using `response_func`. 
+This feature enables you to build mock responses that adapt based on request parameters, headers, and body.
+
+```python
+from mimicker.mimicker import mimicker, post
+
+# Available for use with response_func:
+# kwargs.get("payload")
+# kwargs.get("headers")
+# kwargs.get("params")
+
+def custom_response(**kwargs):
+    request_payload = kwargs.get("payload")
+    return 200, {"message": f"Hello {request_payload.get('name', 'Guest')}"}
+
+mimicker(8080).routes(
+    post("/greet")
+    .response_func(custom_response)
+)
+
+# POST /greet with body {"name": "World"} -> {"message": "Hello World"}
+# POST /greet with empty body -> {"message": "Hello Guest"}
+```
+
+
 ## Available Features:
 
 * `get(path)`: Defines a `GET` endpoint.
@@ -231,6 +258,8 @@ mimicker(8080).routes(
 * `.body(content)`: Defines the response `body`.
 * `.status(code)`: Defines the response `status code`.
 * `.headers(headers)`: Defines response `headers`.
+* `.response_func(func)`: Defines a dynamic response function based on the request data.
+
 
 ## Requirements
 Mimicker supports Python 3.7 and above.
