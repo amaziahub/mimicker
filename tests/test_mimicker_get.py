@@ -68,6 +68,18 @@ def test_get_path_param(mimicker_server):
     assert_that(resp.json(), equal_to({"message": "Hello, world!"}))
 
 
+def test_get_query_param_from_kwargs(mimicker_server):
+    def handle_request(**kwargs):
+        return 200, {"message": f"Hello, {kwargs['query']['extra']}!"}
+
+    mimicker_server.routes(
+        get("/hello").
+        response_func(handle_request)
+    )
+    resp = Client().get('/hello?extra=everyone')
+    assert_that(resp.json(), equal_to({"message": "Hello, everyone!"}))
+
+
 def test_get_empty_response(mimicker_server):
     mimicker_server.routes(
         get("/empty").
