@@ -82,11 +82,11 @@ def test_get_query_param(mimicker_server):
 
 def test_get_with_query_param_spec_matches(mimicker_server):
     mimicker_server.routes(
-        get("/hello?greet={greet}").
+        get("/hello?greeting={greet}").
         body({"message": "Hello, {greet}!"}).
         status(200)
     )
-    resp = Client().get('/hello?greet=world')
+    resp = Client().get('/hello?greeting=world')
     assert_that(resp.json(), equal_to({"message": "Hello, world!"}))
 
 
