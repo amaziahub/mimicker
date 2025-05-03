@@ -33,9 +33,7 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
 
         parsed_url = urlparse(self.path)
         path_only = parsed_url.path
-        raw_query_params = parse_qs(parsed_url.query)
-        # Simplify query params: take the first value if multiple exist for the same key
-        query_params = {k: v[0] for k, v in raw_query_params.items()}
+        query_params = parse_qs(parsed_url.query)
 
         matched_stub, path_params = self.stub_matcher.match(
             method, path_only, request_headers=request_headers
@@ -46,7 +44,7 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
         else:
             self._send_404_response(method)
 
-    def _send_response(self, matched_stub: Stub, path_params: Dict[str, str], query_params: Dict[str, str], request_body: Any, request_headers: Dict[str, str]):
+    def _send_response(self, matched_stub: Stub, path_params: Dict[str, str], query_params: Dict[str, List[str]], request_body: Any, request_headers: Dict[str, str]):
         status_code, delay, response, response_func, headers = matched_stub
         if delay > 0:
             sleep(delay)
