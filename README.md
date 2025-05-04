@@ -84,6 +84,65 @@ mimicker(8080).routes(
 # {"message": "Hello, world!"}
 ```
 
+#### Using Query Parameters
+
+##### Explicitly defined query parameters
+
+Mimicker can handle query parameters dynamically. Here's how you can mock an endpoint with a variable in the query:
+
+```python
+from mimicker.mimicker import mimicker, get
+
+mimicker(8080).routes(
+    get("/hello?name={name}")
+    .body({"message": "Hello, {name}!"})
+    .status(200)
+)
+
+# When the client sends a request to /hello?name=world, the response will be:
+# {"message": "Hello, world!"}
+```
+
+##### Implicit query parameters
+
+When query parameters are not explicitly part of the path template, Mimicker will match
+all otherwise matching requests against those parameters as if using a wildcard. For instance
+
+```python
+from mimicker.mimicker import mimicker, get
+
+mimicker(8080).routes(
+    get("/hello")
+    .body({"message": "Hello, world!"})
+    .status(200)
+)
+
+# When the client sends a request to /hello, the request will match and the response will be:
+# {"message": "Hello, world!"}
+```
+
+These implicitly matched query parameters are available through dynamic responses
+using the `"query"` key in `kwargs` in `response_func` (see below), e.g.
+
+```python
+from mimicker.mimicker import mimicker, get
+
+def custom_response(**kwargs):
+    query_params: Dict[str, List[str]] = kwargs['query']
+    return 200, {"message": f"Hello {query_params['name'][0]}!"}
+
+mimicker(8080).routes(
+    get("/hello")
+    .response_func(custom_response)
+)
+
+# When the client sends a request to /hello?name=world, the request will match and the response will be:
+# {"message": "Hello, world!"}
+```
+
+Note that because query parameters can be repeated with multiple values, they will
+always appear in a list of values.
+
 #### Using Headers
 
 You can also mock responses with custom headers:
