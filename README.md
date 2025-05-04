@@ -117,7 +117,7 @@ mimicker(8080).routes(
     .status(200)
 )
 
-# When the client sends a request to /hello, the request will match and the response will be:
+# When the client sends a request to /hello?name=bob, the request will match and the response will be:
 # {"message": "Hello, world!"}
 ```
 
