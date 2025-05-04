@@ -82,11 +82,11 @@ def test_get_when_implicit_query_params_then_variables_are_available_in_query(mi
 
 def test_get_when_explicit_query_param_then_variables_are_available_in_path(mimicker_server):
     mimicker_server.routes(
-        get("/hello?greeting={greet}").
+        get("/hello2?greeting={greet}").
         body({"message": "Hello, {greet}!"}).
         status(200)
     )
-    resp = Client().get('/hello?greeting=world')
+    resp = Client().get('/hello2?greeting=world')
     assert_that(resp.json(), equal_to({"message": "Hello, world!"}))
 
 
