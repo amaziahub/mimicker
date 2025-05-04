@@ -32,15 +32,12 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
         request_body = self._get_request_body()
 
         parsed_url = urlparse(self.path)
-        path_only = parsed_url.path
-        query_params = parse_qs(parsed_url.query)
-
         matched_stub, path_params = self.stub_matcher.match(
-            method, path_only, request_headers=request_headers
+            method, parsed_url.path, request_headers=request_headers
         )
 
         if matched_stub:
-            self._send_response(matched_stub, path_params, query_params, request_body, request_headers)
+            self._send_response(matched_stub, path_params, parse_qs(parsed_url.query), request_body, request_headers)
         else:
             self._send_404_response(method)
 
