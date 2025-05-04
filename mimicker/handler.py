@@ -2,7 +2,7 @@ import http.server
 import json
 from time import sleep
 from typing import Any, Tuple, Optional, Dict, List
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import parse_qs, urlparse
 
 from mimicker.stub_group import Stub, StubGroup
 
@@ -31,13 +31,12 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
         request_headers = {key.lower(): value for key, value in self.headers.items()}
         request_body = self._get_request_body()
 
-        parsed_url = urlparse(self.path)
         matched_stub, path_params = self.stub_matcher.match(
-            method, parsed_url.path, request_headers=request_headers
+            method, self.path, request_headers=request_headers
         )
 
         if matched_stub:
-            self._send_response(matched_stub, path_params, parse_qs(parsed_url.query), request_body, request_headers)
+            self._send_response(matched_stub, path_params, parse_qs(urlparse(self.path).query), request_body, request_headers)
         else:
             self._send_404_response(method)
 

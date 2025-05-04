@@ -1,6 +1,6 @@
-import re
 from typing import Pattern, Dict, Tuple, Any, Optional, Callable, Union, List, NamedTuple
 
+from mimicker.regex import parse_endpoint_pattern
 
 class Stub(NamedTuple):
     status_code: int
@@ -25,8 +25,7 @@ class StubGroup:
             self.stubs[method] = {}
 
         if isinstance(pattern, str):
-            substituted_pattern = re.sub(r'\{(\w+)\}', r'(?P<\1>[^/]+)', pattern)
-            pattern = re.compile(f"^{substituted_pattern}$")
+            pattern = parse_endpoint_pattern(pattern)
 
         self.stubs[method][pattern] = Stub(status_code, delay, response, response_func, headers)
 

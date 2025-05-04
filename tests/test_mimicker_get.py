@@ -68,19 +68,19 @@ def test_get_path_param(mimicker_server):
     assert_that(resp.json(), equal_to({"message": "Hello, world!"}))
 
 
-def test_get_query_param(mimicker_server):
-    def handle_request(**kwargs):
+def test_get_when_implicit_query_params_then_variables_are_available_in_query(mimicker_server):
+    def answer(**kwargs):
         return 200, {"message": f"Hello, {kwargs['query']['greet'][0]}!"}
 
     mimicker_server.routes(
         get("/hello").
-        response_func(handle_request)
+        response_func(answer)
     )
     resp = Client().get('/hello?greet=world')
     assert_that(resp.json(), equal_to({"message": "Hello, world!"}))
 
 
-def test_get_with_query_param_spec_matches(mimicker_server):
+def test_get_when_explicit_query_param_then_variables_are_available_in_path(mimicker_server):
     mimicker_server.routes(
         get("/hello?greeting={greet}").
         body({"message": "Hello, {greet}!"}).

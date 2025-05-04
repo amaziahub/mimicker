@@ -1,5 +1,6 @@
-from hamcrest import assert_that, none, is_
+from hamcrest import assert_that, none, is_, not_none
 
+from mimicker.regex import parse_endpoint_pattern
 from mimicker.stub_group import StubGroup
 
 
@@ -41,6 +42,31 @@ def test_match_w_path_param():
 
     assert_that(matched, is_((200, 0., {"message": "Hello, {name}!"}, None, None)))
     assert_that(path_param, is_({"name": "mimicker"}))
+
+
+def test_match_w_explicit_query_param_matches_query_param():
+    stub_group = StubGroup()
+    stub_group.add("GET",
+                   parse_endpoint_pattern("/hello/mimicker?greeting={name}"),
+                   200,
+                   {"message": "Hello, {name}!"})
+
+    matched, path_param = stub_group.match("GET", "/hello/mimicker?greeting=world")
+    
+    assert_that(matched, is_((200, 0., {"message": "Hello, world!"}, None, None)))
+    assert_that(path_param, is_({"name": "world"}))
+
+
+def test_match_without_explicit_query_param_matches_all_query_params():
+    stub_group = StubGroup()
+    stub_group.add("GET",
+                   parse_endpoint_pattern("/hello/mimicker"),
+                   200,
+                   {"message": "Hello, world!"})
+
+    matched, _ = stub_group.match("GET", "/hello/mimicker?greeting=world&age=20&city=NewYork")
+    
+    assert_that(matched, not_none())
 
 
 def test_match_w_delay():
