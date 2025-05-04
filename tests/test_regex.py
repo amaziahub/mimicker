@@ -76,7 +76,7 @@ def test_parse_endpoint_pattern_path_param_and_query_param_and_path_mismatched_p
     
 
 def test_parse_endpoint_pattern_with_multiple_path_params_and_query_params_matches():
-    pattern: Pattern = parse_endpoint_pattern("/some/path/{greeting}/{name}?age={age}&city={city}&ignored=param")
-    match = pattern.match("/some/path/hello/mimicker?age=20&city=NewYork&ignored=param")
+    pattern: Pattern = parse_endpoint_pattern("/some/path/{greeting}/ignored/path/{name}/ignored/2?age={age}&city={city}&ignored=param")
+    match = pattern.match("/some/path/hello/ignored/path/mimicker/ignored/2?age=20&city=NewYork&ignored=param")
     assert_that(match, not_none())
     assert_that(match.groupdict(), equal_to({"greeting": "hello", "name": "mimicker", "age": "20", "city": "NewYork"}))
