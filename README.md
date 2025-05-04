@@ -260,6 +260,43 @@ mimicker(8080).routes(
 * `.headers(headers)`: Defines response `headers`.
 * `.response_func(func)`: Defines a dynamic response function based on the request data.
 
+---
+
+## Logging
+Mimicker includes built-in logging to help you observe and debug how your mocked endpoints behave.
+
+By default, Mimicker logs at the INFO level and uses a colorized output for readability. You’ll see messages like:
+
+```css
+[MIMICKER] [2025-05-04 14:52:10] INFO: ✓ Matched stub. Returning configured response.
+```
+
+and:
+
+```css
+[MIMICKER] [2025-05-05 11:50:10,226] INFO: → GET /hello
+Headers:
+{
+  "host": "localhost:8080",
+  "user-agent": "python-requests/2.31.0",
+  "accept-encoding": "gzip, deflate",
+  "accept": "*/*",
+  "connection": "keep-alive"
+}
+```
+
+###  Controlling the Log Level
+You can control the log level using the `MIMICKER_LOG_LEVEL` environment variable. Valid values include:
+
+- `DEBUG`
+- `INFO` (default)
+- `WARNING`
+- `ERROR`
+- `CRITICAL`
+
+This will show detailed request information including method, path, headers, and body.
+
+---
 
 ## Requirements
 Mimicker supports Python 3.7 and above.

@@ -1,8 +1,8 @@
 import atexit
-import logging
 import socketserver
 import threading
 
+from logger import get_logger
 from mimicker.handler import MimickerHandler
 from mimicker.route import Route
 from mimicker.stub_group import StubGroup
@@ -25,12 +25,15 @@ class MimickerServer:
         Args:
             port (int, optional): The port to run the server on. Defaults to 8080.
         """
+        self.logger = get_logger()
         self.stub_matcher = StubGroup()
         self.server = ReusableAddressThreadingTCPServer(("", port), self._handler_factory)
         self._thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         atexit.register(self.shutdown)
+        self.logger.debug("Initialized MimickerServer on port %s", port)
 
     def _handler_factory(self, *args):
+        self.logger.debug("Creating a new handler for incoming connection")
         return MimickerHandler(self.stub_matcher, *args)
 
     def routes(self, *routes: Route):
@@ -63,8 +66,8 @@ class MimickerServer:
         Returns:
             MimickerServer: The current server instance (for method chaining).
         """
-        logging.info("MimickerServer starting on port %s",
-                     self.server.server_address[1])
+        self.logger.info("🚀 MimickerServer started and listening on port %s",
+                         self.server.server_address[1])
         self._thread.start()
         return self
 
