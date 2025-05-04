@@ -123,7 +123,7 @@ def _build_path_regex(path_t: str) -> str:
         m = re.fullmatch(r'\{(\w+)\}', part)
         if m:
             name = m.group(1)  # Extract parameter name from inside braces
-            regex_parts.append(f'(?P<{name}>[^/]+)')  # Create named capture group
+            regex_parts.append(f'(?P<{name}>[^/?]+)')  # Create named capture group to capture parameter names
         else:
             # Escape special regex characters in literal path segments
             regex_parts.append(re.escape(part))

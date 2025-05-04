@@ -50,6 +50,13 @@ def test_parse_endpoint_pattern_with_multiple_path_params_matches():
     assert_that(match.groupdict(), equal_to({"greeting": "hello", "name": "mimicker"}))
 
 
+def test_parse_endpoint_pattern_with_terminal_path_param_doesnt_include_query_params_in_value():
+    pattern: Pattern = parse_endpoint_pattern("/hello/{name}")
+    match = pattern.match("/hello/mimicker?ignored=param")
+    assert_that(match, not_none())
+    assert_that(match.groupdict(), equal_to({"name": "mimicker"}))
+
+
 def test_parse_endpoint_pattern_path_param_and_path_mismatched_path_does_not_match():
     pattern: Pattern = parse_endpoint_pattern("/{greeting}/mimicker")
     match = pattern.match("/hello/mimicker/mismatch")
