@@ -24,7 +24,7 @@ class Route:
         self._status = 200
         self._headers: List[Tuple[str, str]] = []
         self._response_func: Optional[Callable[..., Tuple[int, Any]]] = None
-        self._compiled_path: Pattern = parse_endpoint_pattern(re.escape(path))
+        self._compiled_path: Pattern = parse_endpoint_pattern(path)
 
     def delay(self, delay: float):
         """

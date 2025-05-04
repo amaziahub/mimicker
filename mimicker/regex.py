@@ -22,10 +22,15 @@ def parse_endpoint_pattern(path: str) -> re.Pattern:
 
 
 def _parse_endpoint_pattern_matching_all_query_params(path: str) -> re.Pattern:
-    parameterized_path = re.sub(r'\\{(\w+)\\}', r'(?P<\1>[^/]+)', path)
+    path_only = path.split('?', 1)[0]
+    parameterized_path = _re_sub_param_name(path_only)
     return re.compile(f"^{parameterized_path}(\\?.*)?$")
 
 
 def _parse_endpoint_pattern_matching_explicit_query_params(path: str) -> re.Pattern:
-    substituted_pattern = re.sub(r'\{(\w+)\}', r'(?P<\1>[^/]+)', path)
+    substituted_pattern = _re_sub_param_name(path)
     return re.compile(f"^{substituted_pattern}$")
+
+
+def _re_sub_param_name(path: str) -> str:
+    return re.sub(r'\{(\w+)\}', r'(?P<\1>[^/]+)', path)

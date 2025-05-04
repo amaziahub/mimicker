@@ -52,8 +52,10 @@ def test_match_w_explicit_query_param_matches_query_param():
                    {"message": "Hello, {name}!"})
 
     matched, path_param = stub_group.match("GET", "/hello/mimicker?greeting=world")
+
+    parse_endpoint_pattern("/hello/mimicker?greeting={name}").match("/hello/mimicker?greeting=world")
     
-    assert_that(matched, is_((200, 0., {"message": "Hello, world!"}, None, None)))
+    assert_that(matched, is_((200, 0., {"message": "Hello, {name}!"}, None, None)))
     assert_that(path_param, is_({"name": "world"}))
 
 
