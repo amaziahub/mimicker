@@ -1,5 +1,4 @@
 from re import Pattern
-import re
 from hamcrest import assert_that, equal_to, none, not_none, raises
 from mimicker.error import TemplateError
 from mimicker.regex import parse_endpoint_pattern
