@@ -1,9 +1,5 @@
-import logging
-
 from mimicker.route import Route
 from mimicker.server import MimickerServer
-
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
 
 
 def get(path: str) -> Route:
