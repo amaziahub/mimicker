@@ -4,13 +4,19 @@ from time import sleep
 from typing import Any, Tuple, Optional, Dict, List
 from urllib.parse import parse_qs, urlparse
 
+from logger import get_logger
 from mimicker.stub_group import Stub, StubGroup
 
 
 class MimickerHandler(http.server.SimpleHTTPRequestHandler):
+    logger = get_logger()
+
     def __init__(self, stub_matcher: StubGroup, *args, **kwargs):
         self.stub_matcher = stub_matcher
         super().__init__(*args, **kwargs)
+
+    def log_message(self, format, *args):
+        self.logger.info(format % args)
 
     def do_GET(self):
         self._handle_request("GET")
@@ -31,6 +37,9 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
         request_headers = {key.lower(): value for key, value in self.headers.items()}
         request_body = self._get_request_body()
 
+        self.log_incoming_request(method, request_body, request_headers)
+
+
         matched_stub, path_params = self.stub_matcher.match(
             method, self.path, request_headers=request_headers
         )
@@ -38,7 +47,19 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
         if matched_stub:
             self._send_response(matched_stub, path_params, parse_qs(urlparse(self.path).query), request_body, request_headers)
         else:
+            self.logger.warning("No match for %s %s. Returning 404.", method, self.path)
             self._send_404_response(method)
+
+    def log_incoming_request(self, method, request_body, request_headers):
+        headers_str = json.dumps(request_headers, indent=2)
+        body_str = json.dumps(request_body, indent=2) if request_body else ""
+        self.logger.info(
+            "→ %s %s\nHeaders:\n%s%s",
+            method,
+            self.path,
+            headers_str,
+            f"\nBody:\n{body_str}" if body_str else ""
+        )
 
     def _send_response(self, matched_stub: Stub, path_params: Dict[str, str], query_params: Dict[str, List[str]], request_body: Any, request_headers: Dict[str, str]):
         status_code, delay, response, response_func, headers = matched_stub
