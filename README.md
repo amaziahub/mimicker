@@ -122,13 +122,13 @@ mimicker(8080).routes(
 ```
 
 These implicitly matched query parameters are available through dynamic responses
-using the `"query"` key in `kwargs` in `response_func` (see below), e.g.
+using the `"query_params"` key in `kwargs` in `response_func` (see below), e.g.
 
 ```python
 from mimicker.mimicker import mimicker, get
 
 def custom_response(**kwargs):
-    query_params: Dict[str, List[str]] = kwargs['query']
+    query_params: Dict[str, List[str]] = kwargs['query_params']
     return 200, {"message": f"Hello {query_params['name'][0]}!"}
 
 mimicker(8080).routes(

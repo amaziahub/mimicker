@@ -66,7 +66,7 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
         if delay > 0:
             sleep(delay)
         if response_func:
-            status_code, response = response_func(payload=request_body, headers=request_headers, params=path_params, query=query_params)
+            status_code, response = response_func(payload=request_body, headers=request_headers, params=path_params, query_params=query_params)
 
         self.send_response(status_code)
         self._set_headers(headers)
