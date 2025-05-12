@@ -1,7 +1,7 @@
 import re
 from re import Pattern
 
-from mimicker.error import TemplateError
+from mimicker.exceptions import TemplateError
 
 def parse_endpoint_pattern(template: str) -> Pattern:
     """

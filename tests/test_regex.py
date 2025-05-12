@@ -1,6 +1,6 @@
 from re import Pattern
 from hamcrest import assert_that, equal_to, none, not_none, raises
-from mimicker.error import TemplateError
+from mimicker.exceptions import TemplateError
 from mimicker.regex import parse_endpoint_pattern
 
 def test_parse_endpoint_pattern_static_path_matches_static_path():
