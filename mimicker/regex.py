@@ -120,7 +120,7 @@ def _build_path_regex(path_t: str) -> str:
     regex_parts = []
     for part in parts:
         # Check if the part is a parameter (e.g., {id})
-        m = re.fullmatch(r'\{(\w+)\}', part)
+        m = re.fullmatch(r'\{(\w+)}', part)
         if m:
             name = m.group(1)  # Extract parameter name from inside braces
             regex_parts.append(f'(?P<{name}>[^/?]+)')  # Create named capture group to capture parameter names
