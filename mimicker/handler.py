@@ -39,7 +39,6 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
 
         self.log_incoming_request(method, request_body, request_headers)
 
-
         matched_stub, path_params = self.stub_matcher.match(
             method, self.path, request_headers=request_headers
         )
