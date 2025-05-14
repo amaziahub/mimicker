@@ -1,6 +1,8 @@
 import re
 from typing import Dict, Tuple, Any, Callable, Optional, Pattern, Union, List
 
+from mimicker.regex import parse_endpoint_pattern
+
 
 class Route:
     """
@@ -22,11 +24,7 @@ class Route:
         self._status = 200
         self._headers: List[Tuple[str, str]] = []
         self._response_func: Optional[Callable[..., Tuple[int, Any]]] = None
-
-        escaped_path = re.escape(path)
-        parameterized_path = re.sub(r'\\{(\w+)\\}',
-                                    r'(?P<\1>[^/]+)', escaped_path)
-        self._compiled_path: Pattern = re.compile(f"^{parameterized_path}$")
+        self._compiled_path: Pattern = parse_endpoint_pattern(path)
 
     def delay(self, delay: float):
         """

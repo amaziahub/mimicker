@@ -2,6 +2,7 @@ import http.server
 import json
 from time import sleep
 from typing import Any, Tuple, Optional, Dict, List
+from urllib.parse import parse_qs, urlparse
 
 from logger import get_logger
 from mimicker.stub_group import Stub, StubGroup
@@ -43,7 +44,7 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
         )
 
         if matched_stub:
-            self._send_response(matched_stub, path_params, request_body, request_headers)
+            self._send_response(matched_stub, path_params, parse_qs(urlparse(self.path).query), request_body, request_headers)
         else:
             self.logger.warning("No match for %s %s. Returning 404.", method, self.path)
             self._send_404_response(method)
@@ -59,12 +60,12 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
             f"\nBody:\n{body_str}" if body_str else ""
         )
 
-    def _send_response(self, matched_stub: Stub, path_params: Dict[str, str], request_body: Any, request_headers: Dict[str, str]):
+    def _send_response(self, matched_stub: Stub, path_params: Dict[str, str], query_params: Dict[str, List[str]], request_body: Any, request_headers: Dict[str, str]):
         status_code, delay, response, response_func, headers = matched_stub
         if delay > 0:
             sleep(delay)
         if response_func:
-            status_code, response = response_func(payload=request_body, headers=request_headers, params=path_params)
+            status_code, response = response_func(payload=request_body, headers=request_headers, params=path_params, query_params=query_params)
 
         self.send_response(status_code)
         self._set_headers(headers)
