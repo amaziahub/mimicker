@@ -1,6 +1,8 @@
-from typing import Pattern, Dict, Tuple, Any, Optional, Callable, Union, List, NamedTuple
+from typing import Pattern, Dict, Tuple, Any, Optional, Callable, Union, List, \
+    NamedTuple
 
 from mimicker.regex import parse_endpoint_pattern
+
 
 class Stub(NamedTuple):
     status_code: int
@@ -27,10 +29,12 @@ class StubGroup:
         if isinstance(pattern, str):
             pattern = parse_endpoint_pattern(pattern)
 
-        self.stubs[method][pattern] = Stub(status_code, delay, response, response_func, headers)
+        self.stubs[method][pattern] = Stub(status_code, delay, response, response_func,
+                                           headers)
 
     def match(self, method: str, path: str,
-              request_headers: Optional[Dict[str, str]] = None) -> Tuple[Stub, Dict[str, str]]:
+              request_headers: Optional[Dict[str, str]] = None) -> Tuple[
+        Stub, Dict[str, str]]:
         matched_stub = None
         path_params = {}
 
@@ -49,7 +53,8 @@ class StubGroup:
                 if headers and not headers_included:
                     pass
 
-                matched_stub = Stub(status_code, delay, response, response_func, headers)
+                matched_stub = Stub(status_code, delay, response, response_func,
+                                    headers)
                 path_params = match.groupdict()
                 break
 

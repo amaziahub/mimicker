@@ -3,6 +3,7 @@ from re import Pattern
 
 from mimicker.exceptions import TemplateError
 
+
 def parse_endpoint_pattern(template: str) -> Pattern:
     """
     Parse an endpoint pattern into a regular expression for URL matching.
@@ -34,10 +35,10 @@ def parse_endpoint_pattern(template: str) -> Pattern:
 
         if '?' in template:
             return _parse_with_query(template)
-        
+
         else:
             return _parse_without_query(template)
-        
+
     except re.error as e:
         raise TemplateError(f"invalid template: {template!r}") from e
 
@@ -79,12 +80,12 @@ def _parse_with_query(template: str) -> Pattern:
     """
     path_t, query_t = template.split('?', 1)
     path_regex = _build_path_regex(path_t)
-    
+
     qpats = []
     for qp in query_t.split('&'):
         if '=' not in qp:
             raise TemplateError(f"invalid query segment (no '=' found): {qp!r}")
-        
+
         key, val_t = qp.split('=', 1)
 
         # Handle parameterized query values like key={param}
@@ -99,7 +100,6 @@ def _parse_with_query(template: str) -> Pattern:
     # Construct final regex that matches both path and query parts
     full = rf'^{path_regex}\?{"&".join(qpats)}$'
     return re.compile(full)
-
 
 
 def _build_path_regex(path_t: str) -> str:
@@ -123,10 +123,11 @@ def _build_path_regex(path_t: str) -> str:
         m = re.fullmatch(r'\{(\w+)}', part)
         if m:
             name = m.group(1)  # Extract parameter name from inside braces
-            regex_parts.append(f'(?P<{name}>[^/?]+)')  # Create named capture group to capture parameter names
+            regex_parts.append(
+                f'(?P<{name}>[^/?]+)')  # Create named capture group to capture parameter names
         else:
             # Escape special regex characters in literal path segments
             regex_parts.append(re.escape(part))
-    
+
     # Preserve leading slash and handle empty path case
     return '/' + '/'.join(regex_parts) if parts and parts[0] else '/'
