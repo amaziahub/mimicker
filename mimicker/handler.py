@@ -4,7 +4,7 @@ from time import sleep
 from typing import Any, Tuple, Optional, Dict, List
 from urllib.parse import parse_qs, urlparse
 
-from logger import get_logger
+from mimicker.logger import get_logger
 from mimicker.stub_group import Stub, StubGroup
 
 
