@@ -70,8 +70,13 @@ class Route:
         Returns:
             Route: The current Route instance (for method chaining).
         """
-        self._responses_sequence.append(
-            {"status": status_code, "body": self._body, "times": 1})
+        if self._responses_sequence:
+            # If sequence is being used, add this response to the sequence
+            self._responses_sequence.append(
+                {"status": status_code, "body": self._body, "times": 1})
+        else:
+            # If no sequence is defined, just set the status as before
+            self._status = status_code
         return self
 
     def times(self, times: int):
