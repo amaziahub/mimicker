@@ -26,6 +26,9 @@ class Route:
         self._response_func: Optional[Callable[..., Tuple[int, Any]]] = None
         self._compiled_path: Pattern = parse_endpoint_pattern(path)
 
+        self._responses_sequence = []
+        self._response_index = 0
+
     def delay(self, delay: float):
         """
         Sets the delay (in seconds) before returning the response.
@@ -50,7 +53,11 @@ class Route:
         Returns:
             Route: The current Route instance (for method chaining).
         """
-        self._body = response if response is not None else ""
+        if self._responses_sequence:
+            self._responses_sequence[-1][
+                "body"] = response if response is not None else ""
+        else:
+            self._body = response if response is not None else ""
         return self
 
     def status(self, status_code: int):
@@ -63,7 +70,39 @@ class Route:
         Returns:
             Route: The current Route instance (for method chaining).
         """
-        self._status = status_code
+        if self._responses_sequence:
+            # If sequence is being used, add this response to the sequence
+            self._responses_sequence.append(
+                {"status": status_code, "body": self._body, "times": 1, "always": False}
+            )
+        else:
+            # If no sequence is defined, just set the status as before
+            self._status = status_code
+        return self
+
+    def times(self, times: int):
+        """
+        Sets how many times the last response should be returned.
+
+        Args:
+            times (int): The number of times the response should be returned.
+
+        Returns:
+            Route: The current Route instance (for method chaining).
+        """
+        if self._responses_sequence:
+            self._responses_sequence[-1]["times"] = times
+        return self
+
+    def always(self):
+        """
+        Marks the last response to be repeated indefinitely.
+
+        Returns:
+            Route: The current Route instance (for method chaining).
+        """
+        if self._responses_sequence:
+            self._responses_sequence[-1]["always"] = True
         return self
 
     def headers(self, headers: List[Tuple[str, str]]):
@@ -92,6 +131,22 @@ class Route:
         self._response_func = func
         return self
 
+    def sequence(self, *response_tuples):
+        """
+        Defines a sequence of responses to be returned in order.
+
+        Args:
+            *response_tuples: A sequence of tuples (status_code, body, times).
+
+        Returns:
+            Route: The current Route instance (for method chaining).
+        """
+        for status, body, times in response_tuples:
+            self._responses_sequence.append(
+                {"status": status, "body": body, "times": times, "always": False}
+            )
+        return self
+
     def build(self):
         """
         Builds the route configuration dictionary.
@@ -107,5 +162,23 @@ class Route:
             "body": self._body,
             "status": self._status,
             "headers": self._headers,
-            "response_func": self._response_func
+            "response_func": self._response_func,
+            "responses_sequence": self._responses_sequence
         }
+
+    def handle_request(self, method):
+        """
+        Handles the HTTP request and returns the appropriate response based on the sequence.
+        """
+        if self._response_index < len(self._responses_sequence):
+            response = self._responses_sequence[self._response_index]
+            if response["always"]:
+                pass
+            elif response.get("times", 1) > 1:
+                response["times"] -= 1
+            else:
+                self._response_index += 1
+
+            return {"status": response["status"], "body": response["body"]}
+
+        return {"status": 404, "body": "Not Found"}
