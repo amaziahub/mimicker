@@ -73,7 +73,8 @@ class Route:
         if self._responses_sequence:
             # If sequence is being used, add this response to the sequence
             self._responses_sequence.append(
-                {"status": status_code, "body": self._body, "times": 1})
+                {"status": status_code, "body": self._body, "times": 1, "always": False}
+            )
         else:
             # If no sequence is defined, just set the status as before
             self._status = status_code
@@ -91,6 +92,17 @@ class Route:
         """
         if self._responses_sequence:
             self._responses_sequence[-1]["times"] = times
+        return self
+
+    def always(self):
+        """
+        Marks the last response to be repeated indefinitely.
+
+        Returns:
+            Route: The current Route instance (for method chaining).
+        """
+        if self._responses_sequence:
+            self._responses_sequence[-1]["always"] = True
         return self
 
     def headers(self, headers: List[Tuple[str, str]]):
@@ -131,7 +143,8 @@ class Route:
         """
         for status, body, times in response_tuples:
             self._responses_sequence.append(
-                {"status": status, "body": body, "times": times})
+                {"status": status, "body": body, "times": times, "always": False}
+            )
         return self
 
     def build(self):
@@ -159,9 +172,13 @@ class Route:
         """
         if self._response_index < len(self._responses_sequence):
             response = self._responses_sequence[self._response_index]
-            response["times"] -= 1
-            if response["times"] <= 0:
+            if response["always"]:
+                pass
+            elif response.get("times", 1) > 1:
+                response["times"] -= 1
+            else:
                 self._response_index += 1
+
             return {"status": response["status"], "body": response["body"]}
 
         return {"status": 404, "body": "Not Found"}
