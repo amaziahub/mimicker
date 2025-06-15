@@ -65,12 +65,7 @@ class MimickerServer:
 
         Returns:
             int: The port number.
-
-        Raises:
-            RuntimeError: If the server is not initialized.
         """
-        if self.server is None:
-            raise RuntimeError("Server instance is not initialized.")
         return self.server.server_address[1]
 
     def start(self):
