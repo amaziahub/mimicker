@@ -2,7 +2,7 @@ import atexit
 import socketserver
 import threading
 
-from logger import get_logger
+from mimicker.logger import get_logger
 from mimicker.handler import MimickerHandler
 from mimicker.route import Route
 from mimicker.stub_group import StubGroup

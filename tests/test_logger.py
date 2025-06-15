@@ -3,7 +3,7 @@ from io import StringIO
 
 from hamcrest import assert_that, contains_string
 
-from logger import configure_logger
+from mimicker.logger import configure_logger
 
 
 def test_logger_outputs(caplog):
