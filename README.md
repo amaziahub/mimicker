@@ -305,6 +305,25 @@ mimicker(8080).routes(
 # POST /greet with empty body -> {"message": "Hello Guest"}
 ```
 
+### Using a Random Port
+
+If you start Mimicker with port `0`, the system will automatically assign an available port. You can retrieve the actual port Mimicker is running on using the `get_port` method:
+
+```python
+from mimicker.mimicker import mimicker, get
+
+server = mimicker(0).routes(
+    get("/hello")
+    .body({"message": "Hello, World!"})
+    .status(200)
+)
+
+actual_port = server.get_port()
+print(f"Mimicker is running on port {actual_port}")
+```
+
+This is useful for test environments where a specific port is not required.
+
 
 ## Available Features:
 

@@ -59,6 +59,15 @@ class MimickerServer:
             )
         return self
 
+    def get_port(self) -> int:
+        """
+        Returns the port number the Mimicker server is listening on.
+
+        Returns:
+            int: The port number.
+        """
+        return self.server.server_address[1]
+
     def start(self):
         """
         Starts the Mimicker server in a background thread.
