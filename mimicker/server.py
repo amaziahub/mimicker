@@ -86,7 +86,7 @@ class MimickerServer:
 
         Ensures that the server is stopped and the thread is joined if still running.
         """
+        self.server.shutdown() # Shutdown server gracefully (shutdown before server_close is important on Windows)
         self.server.server_close()
-        self.server.shutdown()
         if self._thread.is_alive():
             self._thread.join()
