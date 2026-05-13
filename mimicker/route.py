@@ -1,6 +1,7 @@
 import re
-from typing import Dict, Tuple, Any, Callable, Optional, Pattern, Union, List
+from typing import Any, Callable, Dict, List, Optional, Pattern, Tuple, Union
 
+from mimicker.rate_limit import RateLimitConfig
 from mimicker.regex import parse_endpoint_pattern
 
 
@@ -25,6 +26,7 @@ class Route:
         self._headers: List[Tuple[str, str]] = []
         self._response_func: Optional[Callable[..., Tuple[int, Any]]] = None
         self._compiled_path: Pattern = parse_endpoint_pattern(path)
+        self._rate_limit: Optional[RateLimitConfig] = None
 
     def delay(self, delay: float):
         """
@@ -92,6 +94,40 @@ class Route:
         self._response_func = func
         return self
 
+    def rate_limit(
+        self,
+        max_requests: int = 10,
+        window_seconds: float = 60.0,
+        key_header: Optional[str] = None,
+        status_code: int = 429,
+        body: Any = None,
+        headers: Optional[List[Tuple[str, str]]] = None,
+    ):
+        """
+        Configures rate limiting for this route.
+
+        Args:
+            max_requests: Maximum number of requests allowed within the window.
+            window_seconds: Time window in seconds.
+            key_header: Optional request header to key rate limits by (e.g. "X-Api-Key").
+            status_code: HTTP status code to return when rate limited.
+            body: Response body when rate limited.
+            headers: Response headers when rate limited.
+
+        Returns:
+            Route: The current Route instance (for method chaining).
+        """
+        self._rate_limit = RateLimitConfig(
+            max_requests=max_requests,
+            window_seconds=window_seconds,
+            key_header=key_header,
+            status_code=status_code,
+            body=body if body is not None else {"error": "Too Many Requests"},
+            headers=headers or [("Retry-After", str(int(window_seconds))),
+                                ("Content-Type", "application/json")],
+        )
+        return self
+
     def build(self):
         """
         Builds the route configuration dictionary.
@@ -107,5 +143,6 @@ class Route:
             "body": self._body,
             "status": self._status,
             "headers": self._headers,
-            "response_func": self._response_func
+            "response_func": self._response_func,
+            "rate_limit": self._rate_limit,
         }
