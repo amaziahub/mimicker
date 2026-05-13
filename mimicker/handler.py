@@ -44,7 +44,7 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
         )
 
         if matched_stub:
-            self._send_response(matched_stub, path_params,
+            self._send_response(matched_stub, method, path_params,
                                 parse_qs(urlparse(self.path).query), request_body,
                                 request_headers)
         else:
@@ -62,10 +62,31 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
             f"\nBody:\n{body_str}" if body_str else ""
         )
 
-    def _send_response(self, matched_stub: Stub, path_params: Dict[str, str],
+    def _send_response(self, matched_stub: Stub, method: str,
+                       path_params: Dict[str, str],
                        query_params: Dict[str, List[str]], request_body: Any,
                        request_headers: Dict[str, str]):
-        status_code, delay, response, response_func, headers = matched_stub
+        if matched_stub.rate_limit:
+            key_header_val = request_headers.get(
+                matched_stub.rate_limit.key_header.lower()
+            ) if matched_stub.rate_limit.key_header else ""
+            tracker_key = f"{method}:{urlparse(self.path).path}:{key_header_val}"
+            allowed, remaining, reset_time = self.stub_matcher.rate_limiter.is_allowed(
+                tracker_key,
+                matched_stub.rate_limit.max_requests,
+                matched_stub.rate_limit.window_seconds,
+            )
+            if not allowed:
+                rl = matched_stub.rate_limit
+                self.send_response(rl.status_code)
+                if rl.headers:
+                    for header_name, header_value in rl.headers:
+                        self.send_header(header_name, header_value)
+                self.end_headers()
+                self._write_response(rl.body, path_params)
+                return
+
+        status_code, delay, response, response_func, headers, _ = matched_stub
         if delay > 0:
             sleep(delay)
         if response_func:

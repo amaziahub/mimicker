@@ -34,6 +34,7 @@ development, and CI environments.
 - Create HTTP stubs for various endpoints and methods
 - Mock responses with specific status codes, headers, and body content
 - Flexible configuration for multiple endpoints
+- Simulate rate limiting with configurable thresholds, windows, and 429 responses
 
 ## Installation
 
@@ -305,6 +306,66 @@ mimicker(8080).routes(
 # POST /greet with empty body -> {"message": "Hello Guest"}
 ```
 
+### Rate Limiting
+
+Mimicker can simulate rate-limited APIs — useful for testing how your code handles HTTP 429 (Too Many Requests) responses.
+
+```python
+from mimicker.mimicker import mimicker, get
+
+mimicker(8080).routes(
+    get("/api/data")
+    .body({"data": "ok"})
+    .status(200)
+    .rate_limit(max_requests=3, window_seconds=60)
+)
+
+# The first 3 requests to /api/data within 60 seconds return 200 with {"data": "ok"}
+# The 4th request returns 429 Too Many Requests
+```
+
+#### Customizing the Rate Limit Response
+
+You can customize the status code, body, and headers sent when the rate limit is exceeded:
+
+```python
+from mimicker.mimicker import mimicker, get
+
+mimicker(8080).routes(
+    get("/api/data")
+    .body({"data": "ok"})
+    .rate_limit(
+        max_requests=5,
+        window_seconds=60,
+        status_code=429,
+        body={"error": "rate_limit_exceeded", "retry_after": 60},
+        headers=[("Retry-After", "60"), ("Content-Type", "application/json")]
+    )
+)
+
+# Exceeding 5 requests per minute returns:
+# Status: 429
+# Body: {"error": "rate_limit_exceeded", "retry_after": 60}
+# Headers: Retry-After: 60
+```
+
+#### Per-Client Rate Limiting
+
+Rate limits can be keyed by a request header (e.g. `X-Api-Key`) so different clients have independent counters:
+
+```python
+from mimicker.mimicker import mimicker, get
+
+mimicker(8080).routes(
+    get("/api/users")
+    .body({"users": ["alice", "bob"]})
+    .rate_limit(max_requests=10, window_seconds=60, key_header="X-Api-Key")
+)
+
+# Client A (X-Api-Key: key-a) can make 10 requests per minute
+# Client B (X-Api-Key: key-b) can also make 10 requests per minute — independently
+```
+
 ### Using a Random Port
 
 If you start Mimicker with port `0`, the system will automatically assign an available port. You can retrieve the actual port Mimicker is running on using the `get_port` method:
@@ -337,6 +398,7 @@ This is useful for test environments where a specific port is not required.
 * `.status(code)`: Defines the response `status code`.
 * `.headers(headers)`: Defines response `headers`.
 * `.response_func(func)`: Defines a dynamic response function based on the request data.
+* `.rate_limit(max_requests, window_seconds, key_header, status_code, body, headers)`: Simulates rate limiting with a sliding window counter. Returns a configurable 429 response when exceeded.
 
 ---
 

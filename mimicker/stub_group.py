@@ -1,6 +1,7 @@
 from typing import Pattern, Dict, Tuple, Any, Optional, Callable, Union, List, \
     NamedTuple
 
+from mimicker.rate_limit import RateLimitConfig, RateLimitTracker
 from mimicker.regex import parse_endpoint_pattern
 
 
@@ -8,8 +9,9 @@ class Stub(NamedTuple):
     status_code: int
     delay: float
     response: Any
-    response_func: Optional[Callable]
-    headers: Optional[List[Tuple[str, str]]]
+    response_func: Optional[Callable] = None
+    headers: Optional[List[Tuple[str, str]]] = None
+    rate_limit: Optional[RateLimitConfig] = None
 
 
 class StubGroup:
@@ -18,11 +20,13 @@ class StubGroup:
             str,
             Dict[Pattern, Stub]
         ] = {}
+        self.rate_limiter = RateLimitTracker()
 
     def add(self, method: str, pattern: Union[str, Pattern],
             status_code: int, response: Any, delay: Optional[float] = 0,
             response_func: Optional[Callable[[], Tuple[int, Any]]] = None,
-            headers: Optional[List[Tuple[str, str]]] = None):
+            headers: Optional[List[Tuple[str, str]]] = None,
+            rate_limit: Optional[RateLimitConfig] = None):
         if method not in self.stubs:
             self.stubs[method] = {}
 
@@ -30,7 +34,7 @@ class StubGroup:
             pattern = parse_endpoint_pattern(pattern)
 
         self.stubs[method][pattern] = Stub(status_code, delay, response, response_func,
-                                           headers)
+                                           headers, rate_limit)
 
     def match(self, method: str, path: str,
               request_headers: Optional[Dict[str, str]] = None) -> Tuple[
@@ -38,23 +42,21 @@ class StubGroup:
         matched_stub = None
         path_params = {}
 
-        for compiled_path, (status_code, delay, response, response_func, headers) \
-                in self.stubs.get(method, {}).items():
+        for compiled_path, stub in self.stubs.get(method, {}).items():
             match = compiled_path.match(path)
             if match:
                 headers_included = True
-                if headers and request_headers:
+                if stub.headers and request_headers:
                     headers_included = all(
                         header_name in request_headers
                         and request_headers[header_name] == header_value
-                        for header_name, header_value in headers
+                        for header_name, header_value in stub.headers
                     )
 
-                if headers and not headers_included:
+                if stub.headers and not headers_included:
                     pass
 
-                matched_stub = Stub(status_code, delay, response, response_func,
-                                    headers)
+                matched_stub = stub
                 path_params = match.groupdict()
                 break
 
