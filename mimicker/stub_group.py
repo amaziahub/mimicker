@@ -3,6 +3,7 @@ from typing import Pattern, Dict, Tuple, Any, Optional, Callable, Union, List, \
 
 from mimicker.rate_limit import RateLimitConfig, RateLimitTracker
 from mimicker.regex import parse_endpoint_pattern
+from mimicker.sequence import SequenceConfig
 
 
 class Stub(NamedTuple):
@@ -12,6 +13,7 @@ class Stub(NamedTuple):
     response_func: Optional[Callable] = None
     headers: Optional[List[Tuple[str, str]]] = None
     rate_limit: Optional[RateLimitConfig] = None
+    sequence: Optional[SequenceConfig] = None
 
 
 class StubGroup:
@@ -26,7 +28,8 @@ class StubGroup:
             status_code: int, response: Any, delay: Optional[float] = 0,
             response_func: Optional[Callable[[], Tuple[int, Any]]] = None,
             headers: Optional[List[Tuple[str, str]]] = None,
-            rate_limit: Optional[RateLimitConfig] = None):
+            rate_limit: Optional[RateLimitConfig] = None,
+            sequence: Optional[SequenceConfig] = None):
         if method not in self.stubs:
             self.stubs[method] = {}
 
@@ -34,7 +37,7 @@ class StubGroup:
             pattern = parse_endpoint_pattern(pattern)
 
         self.stubs[method][pattern] = Stub(status_code, delay, response, response_func,
-                                           headers, rate_limit)
+                                           headers, rate_limit, sequence)
 
     def match(self, method: str, path: str,
               request_headers: Optional[Dict[str, str]] = None) -> Tuple[

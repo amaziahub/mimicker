@@ -56,7 +56,8 @@ class MimickerServer:
                 response=route_config["body"],
                 headers=route_config["headers"],
                 response_func=route_config["response_func"],
-                rate_limit=route_config["rate_limit"]
+                rate_limit=route_config["rate_limit"],
+                sequence=route_config["sequence"]
             )
         return self
 
