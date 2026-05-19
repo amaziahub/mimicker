@@ -366,6 +366,50 @@ mimicker(8080).routes(
 # Client B (X-Api-Key: key-b) can also make 10 requests per minute — independently
 ```
 
+#### Sequencing Responses
+
+Mimicker can return a different response on each successive call to the same endpoint — useful for simulating retries, flaky services, or multi-step workflows.
+
+Import `step` from `mimicker.sequence` and chain it exactly like a route:
+
+```python
+from mimicker.mimicker import mimicker, get
+from mimicker.sequence import step
+
+mimicker(8080).routes(
+    get("/api/data")
+    .sequence(
+        step().status(200).body({"data": "ok"}),
+        step().status(429).body({"error": "rate limited"}),
+        step().status(503).body({"error": "service unavailable"}),
+    )
+)
+
+# 1st request -> 200 {"data": "ok"}
+# 2nd request -> 429 {"error": "rate limited"}
+# 3rd request -> 503 {"error": "service unavailable"}
+# 4th+ request -> 503 (last step repeats by default)
+```
+
+Each `step()` supports `.status()`, `.body()`, `.headers()`, and `.delay()`.
+
+##### Cycling through steps
+
+Pass `cycle=True` to loop back to the first step after the last one — useful for simulating persistently flaky services:
+
+```python
+mimicker(8080).routes(
+    get("/flaky")
+    .sequence(
+        step().status(200).body({"ok": True}),
+        step().status(500).body({"error": "boom"}),
+        cycle=True,
+    )
+)
+
+# Requests alternate: 200, 500, 200, 500, ...
+```
+
 ### Using a Random Port
 
 If you start Mimicker with port `0`, the system will automatically assign an available port. You can retrieve the actual port Mimicker is running on using the `get_port` method:
@@ -399,6 +443,7 @@ This is useful for test environments where a specific port is not required.
 * `.headers(headers)`: Defines response `headers`.
 * `.response_func(func)`: Defines a dynamic response function based on the request data.
 * `.rate_limit(max_requests, window_seconds, key_header, status_code, body, headers)`: Simulates rate limiting with a sliding window counter. Returns a configurable 429 response when exceeded.
+* `.sequence(*steps, cycle)`: Returns a different response on each successive call. Steps are built with `step()` from `mimicker.sequence`. After exhaustion, repeats the last step (or cycles if `cycle=True`).
 
 ---
 

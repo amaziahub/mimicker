@@ -3,6 +3,7 @@ from typing import Any, Callable, Dict, List, Optional, Pattern, Tuple, Union
 
 from mimicker.rate_limit import RateLimitConfig
 from mimicker.regex import parse_endpoint_pattern
+from mimicker.sequence import SequenceConfig, SequenceStep
 
 
 class Route:
@@ -27,6 +28,7 @@ class Route:
         self._response_func: Optional[Callable[..., Tuple[int, Any]]] = None
         self._compiled_path: Pattern = parse_endpoint_pattern(path)
         self._rate_limit: Optional[RateLimitConfig] = None
+        self._sequence: Optional[SequenceConfig] = None
 
     def delay(self, delay: float):
         """
@@ -94,6 +96,21 @@ class Route:
         self._response_func = func
         return self
 
+    def sequence(self, *steps: SequenceStep, cycle: bool = False):
+        """
+        Configures this route to return a different response on each successive call.
+
+        Args:
+            *steps (SequenceStep): Ordered response steps built with step().
+            cycle (bool): If True, loops back to the first step after the last one.
+                          If False (default), repeats the last step indefinitely.
+
+        Returns:
+            Route: The current Route instance (for method chaining).
+        """
+        self._sequence = SequenceConfig(list(steps), cycle=cycle)
+        return self
+
     def rate_limit(
         self,
         max_requests: int = 10,
@@ -145,4 +162,5 @@ class Route:
             "headers": self._headers,
             "response_func": self._response_func,
             "rate_limit": self._rate_limit,
+            "sequence": self._sequence,
         }

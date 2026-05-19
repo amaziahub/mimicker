@@ -20,7 +20,7 @@ def test_match():
     stub_group = StubGroup()
     stub_group.add("GET", "/hi", 200, {"message": "hello"})
     matched, _ = stub_group.match("GET", "/hi")
-    assert_that(matched, is_((200, 0., {"message": "hello"}, None, None, None)))
+    assert_that(matched, is_((200, 0., {"message": "hello"}, None, None, None, None)))
 
 
 def test_none_on_partial_match():
@@ -39,7 +39,7 @@ def test_match_w_path_param():
 
     matched, path_param = stub_group.match("GET", "/hello/mimicker")
 
-    assert_that(matched, is_((200, 0., {"message": "Hello, {name}!"}, None, None, None)))
+    assert_that(matched, is_((200, 0., {"message": "Hello, {name}!"}, None, None, None, None)))
     assert_that(path_param, is_({"name": "mimicker"}))
 
 
@@ -52,7 +52,7 @@ def test_match_w_explicit_query_param_matches_query_param():
 
     matched, path_param = stub_group.match("GET", "/hello/mimicker?greeting=world")
     
-    assert_that(matched, is_((200, 0., {"message": "Hello, {name}!"}, None, None, None)))
+    assert_that(matched, is_((200, 0., {"message": "Hello, {name}!"}, None, None, None, None)))
     assert_that(path_param, is_({"name": "world"}))
 
 
@@ -74,7 +74,7 @@ def test_match_w_delay():
 
     matched, _ = stub_group.match("GET", "/hi")
 
-    assert_that(matched, is_((200, 3., {"message": "hello"}, None, None, None)))
+    assert_that(matched, is_((200, 3., {"message": "hello"}, None, None, None, None)))
 
 
 def test_match_stub_with_response_func():
@@ -86,7 +86,7 @@ def test_match_stub_with_response_func():
     stub_group.add("GET", "/dynamic",
                    200, {}, response_func=dynamic_response)
     matched, _ = stub_group.match("GET", "/dynamic")
-    assert_that(matched, is_((200, 0., {}, dynamic_response, None, None)))
+    assert_that(matched, is_((200, 0., {}, dynamic_response, None, None, None)))
 
 
 def test_match_given_unexpected_header():
@@ -98,7 +98,7 @@ def test_match_given_unexpected_header():
         "GET", "/hi",
         request_headers={"Content-Type": "application/json"})
     assert_that(matched, is_((200, 0., {'message': 'hello'}, None,
-                              [('Content-Type', 'text/plain')], None)))
+                              [('Content-Type', 'text/plain')], None, None)))
 
 
 def test_match_given_partial_expected_headers():
@@ -117,4 +117,4 @@ def test_match_given_partial_expected_headers():
                               None, [
                                   ('Content-Type', "application/json"),
                                   ('Authorization', "Bearer YOUR_TOKEN"),
-                                  ('Custom-Header', "CustomValue")], None)))
+                                  ('Custom-Header', "CustomValue")], None, None)))

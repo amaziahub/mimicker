@@ -86,10 +86,18 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
                 self._write_response(rl.body, path_params)
                 return
 
-        status_code, delay, response, response_func, headers, _ = matched_stub
+        status_code, delay, response, response_func, headers, _, sequence = matched_stub
+
+        if sequence:
+            seq_step = sequence.next_step()
+            status_code = seq_step._status
+            response = seq_step._body
+            headers = seq_step._headers
+            delay = seq_step._delay
+
         if delay > 0:
             sleep(delay)
-        if response_func:
+        if response_func and not sequence:
             status_code, response = response_func(payload=request_body,
                                                   headers=request_headers,
                                                   params=path_params,
