@@ -93,8 +93,13 @@ def test_sequence_works_with_post(mimicker_server):
     assert_that(client.post_as_json("/seq/post").status_code, is_(409))
 
 
-def test_sequence_is_thread_safe(mimicker_server):
-    mimicker_server.routes(
+def test_sequence_is_thread_safe():
+    # Uses a dedicated server so concurrent requests don't share state with the
+    # session-scoped server, which accumulates stubs from every other test and
+    # makes id()-based pattern lookups in _stub_keys unreliable under load.
+    from mimicker.mimicker import mimicker as _mimicker
+    server = _mimicker(0)
+    server.routes(
         get("/seq/concurrent")
         .sequence(
             step().status(200).body({"n": 1}),
@@ -105,7 +110,8 @@ def test_sequence_is_thread_safe(mimicker_server):
             cycle=True,
         )
     )
-    client = Client()
+    port = server.get_port()
+    client = Client(f"http://localhost:{port}")
     results = []
     lock = threading.Lock()
 
@@ -120,8 +126,38 @@ def test_sequence_is_thread_safe(mimicker_server):
     for t in threads:
         t.join()
 
+    server.shutdown()
+
     assert_that(len(results), is_(10))
     assert all(n in [1, 2, 3, 4, 5] for n in results)
+
+
+def test_sequence_step_headers_are_sent(mimicker_server):
+    mimicker_server.routes(
+        get("/seq/headers")
+        .sequence(
+            step().status(200).body({"ok": True}).headers([("X-Step", "one")]),
+        )
+    )
+    client = Client()
+    resp = client.get("/seq/headers")
+    assert resp.status_code == 200
+    assert resp.headers.get("X-Step") == "one"
+
+
+def test_sequence_step_delay_field():
+    s = step().status(200).body({}).delay(0.1)
+    assert s._delay == 0.1
+
+
+def test_sequence_step_with_no_body_returns_empty_response(mimicker_server):
+    mimicker_server.routes(
+        get("/seq/nobody")
+        .sequence(step().status(204))
+    )
+    client = Client()
+    resp = client.get("/seq/nobody")
+    assert resp.status_code == 204
 
 
 def test_sequence_does_not_affect_non_sequence_routes(mimicker_server):

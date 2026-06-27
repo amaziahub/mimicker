@@ -1,0 +1,60 @@
+name: Mimicker Stub Coverage Report
+description: >
+  Post a stub coverage and request-drift report to the GitHub Actions job summary.
+  Run this step after your tests complete to see which stubs were exercised and
+  which real requests hit no stub (contract drift signal).
+
+inputs:
+  port:
+    description: Host port Mimicker is running on (default 8080).
+    required: false
+    default: '8080'
+  fail_on_unmatched:
+    description: Fail the step (exit 1) if any unmatched requests were recorded.
+    required: false
+    default: 'false'
+
+runs:
+  using: composite
+  steps:
+    - name: Fetch and post coverage report
+      shell: bash
+      run: |
+        REPORT=$(curl -sf "http://localhost:${{ inputs.port }}/__mimicker__/report")
+        if [ $? -ne 0 ]; then
+          echo "::warning::Could not fetch Mimicker report from port ${{ inputs.port }}"
+          exit 0
+        fi
+
+        # Generate GitHub-flavoured Markdown summary using the mimicker CLI
+        pip install --quiet mimicker 2>/dev/null || true
+        echo "$REPORT" | python3 - << 'EOF'
+        import json, sys
+        data = json.load(sys.stdin)
+        s = data["summary"]
+        icon = "✅" if s["unmatched_requests"] == 0 else "⚠️"
+        print(f"## Mimicker Stub Coverage\n")
+        print(f"{icon} **{s['matched_stubs']}/{s['total_stubs']}** stubs exercised &nbsp;|&nbsp; **{s['unmatched_requests']}** unmatched request(s)\n")
+        print("### Stub Coverage\n")
+        print("| Method | Path | Hits |")
+        print("|--------|------|-----:|")
+        for stub in data["stubs"]:
+            icon2 = "✅" if stub["hit_count"] > 0 else "❌"
+            print(f"| `{stub['method']}` | `{stub['path']}` | {icon2} {stub['hit_count']} |")
+        if data["unmatched_requests"]:
+            print("\n### Unmatched Requests (Contract Drift)\n")
+            print("| Method | Path | Timestamp |")
+            print("|--------|------|-----------|")
+            for req in data["unmatched_requests"]:
+                print(f"| `{req['method']}` | `{req['path']}` | {req['timestamp']} |")
+        EOF
+
+        if [ "${{ inputs.fail_on_unmatched }}" = "true" ]; then
+          UNMATCHED=$(echo "$REPORT" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary']['unmatched_requests'])")
+          if [ "$UNMATCHED" -gt 0 ]; then
+            echo "::error::$UNMATCHED unmatched request(s) detected — see report above."
+            exit 1
+          fi
+        fi
+      env:
+        GITHUB_STEP_SUMMARY: ${{ github.step_summary }}

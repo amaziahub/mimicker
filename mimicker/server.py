@@ -6,10 +6,14 @@ from mimicker.logger import get_logger
 from mimicker.handler import MimickerHandler
 from mimicker.route import Route
 from mimicker.stub_group import StubGroup
+from mimicker.tracking import RequestTracker
 
 
 class ReusableAddressThreadingTCPServer(socketserver.ThreadingTCPServer):
     allow_reuse_address = True
+    # Default backlog of 5 causes RST on macOS when more than 5 connections
+    # arrive simultaneously before the first accept() clears the queue.
+    request_queue_size = 128
 
 
 class MimickerServer:
@@ -19,12 +23,6 @@ class MimickerServer:
     This server allows defining request-response routes for testing or simulation purposes.
     """
     def __init__(self, port: int = 8080):
-        """
-        Initializes the Mimicker server.
-
-        Args:
-            port (int, optional): The port to run the server on. Defaults to 8080.
-        """
         self.logger = get_logger()
         self.stub_matcher = StubGroup()
         self.server = ReusableAddressThreadingTCPServer(("", port), self._handler_factory)
@@ -57,9 +55,31 @@ class MimickerServer:
                 headers=route_config["headers"],
                 response_func=route_config["response_func"],
                 rate_limit=route_config["rate_limit"],
-                sequence=route_config["sequence"]
+                sequence=route_config["sequence"],
+                path_template=route_config["path"],
             )
         return self
+
+    def load_config(self, path: str) -> "MimickerServer":
+        """
+        Load routes from a YAML or JSON stub config file.
+
+        Args:
+            path (str): Path to the config file.
+
+        Returns:
+            MimickerServer: The current server instance (for method chaining).
+        """
+        from mimicker.config import build_routes, load_config, validate_config
+        data = load_config(path)
+        errors = validate_config(data)
+        if errors:
+            raise ValueError(f"Invalid config file '{path}': {'; '.join(errors)}")
+        return self.routes(*build_routes(data))
+
+    @property
+    def tracker(self) -> RequestTracker:
+        return self.stub_matcher.tracker
 
     def get_port(self) -> int:
         """
@@ -77,7 +97,7 @@ class MimickerServer:
         Returns:
             MimickerServer: The current server instance (for method chaining).
         """
-        self.logger.info("🚀 MimickerServer started and listening on port %s",
+        self.logger.info("MimickerServer started and listening on port %s",
                          self.server.server_address[1])
         self._thread.start()
         return self
@@ -85,10 +105,8 @@ class MimickerServer:
     def shutdown(self):
         """
         Shuts down the Mimicker server gracefully.
-
-        Ensures that the server is stopped and the thread is joined if still running.
         """
-        self.server.shutdown() # Shutdown server gracefully (shutdown before server_close is important on Windows)
+        self.server.shutdown()
         self.server.server_close()
         if self._thread.is_alive():
             self._thread.join()
