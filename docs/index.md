@@ -4,14 +4,10 @@
 
 Mimicker lets you stub HTTP endpoints in seconds. Define stubs in Python, YAML, or from the CLI — no code required for CI-only users.
 
-<div align="center">
-
 [![Mimicker Tests](https://github.com/amaziahub/mimicker/actions/workflows/test.yml/badge.svg)](https://github.com/amaziahub/mimicker/actions/workflows/test.yml)
 [![PyPI Version](https://img.shields.io/pypi/v/mimicker.svg)](https://pypi.org/project/mimicker/)
 [![Downloads](https://pepy.tech/badge/mimicker)](https://pepy.tech/project/mimicker)
 [![License](http://img.shields.io/:license-apache2.0-red.svg)](http://doge.mit-license.org)
-
-</div>
 
 ---
 
