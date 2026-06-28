@@ -1,0 +1,66 @@
+##############################################################################
+# GitLab CI/CD Catalog Component — Mimicker HTTP Mock Server
+#
+# Publish this file to gitlab.com/amaziahub/mimicker-component
+# Usage:
+#
+#   include:
+#     - component: gitlab.com/amaziahub/mimicker-component/serve@1.0
+#       inputs:
+#         stubs_file: test/stubs.yaml   # optional
+#         port: 8080                    # optional
+##############################################################################
+
+spec:
+  inputs:
+    stubs_file:
+      description: Path to a YAML stub config file (relative to repo root). Optional.
+      default: ''
+    port:
+      description: Port to expose on the host.
+      default: '8080'
+    version:
+      description: Mimicker Docker image version tag.
+      default: 'latest'
+    timeout:
+      description: Seconds to wait for the server to be healthy.
+      default: '30'
+
+---
+
+.mimicker-serve:
+  image: docker:24
+  services:
+    - docker:24-dind
+  variables:
+    MIMICKER_PORT: $[[ inputs.port ]]
+    MIMICKER_VERSION: $[[ inputs.version ]]
+    MIMICKER_STUBS: $[[ inputs.stubs_file ]]
+    MIMICKER_TIMEOUT: $[[ inputs.timeout ]]
+  before_script:
+    - |
+      STUBS_MOUNT=""
+      if [ -n "$MIMICKER_STUBS" ]; then
+        STUBS_MOUNT="-v $CI_PROJECT_DIR/$MIMICKER_STUBS:/config/stubs.yaml:ro"
+      fi
+      docker run -d \
+        --name mimicker \
+        --network host \
+        $STUBS_MOUNT \
+        "ghcr.io/amaziahub/mimicker:${MIMICKER_VERSION}"
+
+      # Wait for health without relying on Python being installed in this job
+      elapsed=0
+      until curl -sf "http://localhost:${MIMICKER_PORT}/__mimicker__/health" > /dev/null 2>&1; do
+        if [ "$elapsed" -ge "$MIMICKER_TIMEOUT" ]; then
+          echo "Mimicker did not become healthy within ${MIMICKER_TIMEOUT}s"
+          docker logs mimicker
+          exit 1
+        fi
+        sleep 0.5
+        elapsed=$((elapsed + 1))
+      done
+      echo "Mimicker ready on port ${MIMICKER_PORT}"
+  after_script:
+    - docker stop mimicker || true
+    - docker rm mimicker || true

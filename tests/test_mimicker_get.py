@@ -46,6 +46,14 @@ def test_get_body_as_text(mimicker_server):
     assert_that(resp.text, is_("hello world"))
 
 
+def test_get_body_as_raw_value(mimicker_server):
+    mimicker_server.routes(
+        get('/raw').body(42)
+    )
+    resp = Client().get('/raw')
+    assert_that(resp.text, is_("42"))
+
+
 def test_get_body_as_json(mimicker_server):
     body = {"message": "Hello, World!"}
     mimicker_server.routes(

@@ -447,6 +447,201 @@ This is useful for test environments where a specific port is not required.
 
 ---
 
+## CLI & CI/CD
+
+Mimicker ships a `mimicker` command so **any language's CI pipeline** can run it with zero Python code.
+
+### Installation
+
+```bash
+pip install mimicker          # gives you the `mimicker` CLI
+```
+
+### Declarative stub files (YAML / JSON)
+
+Define stubs in a file — the same features as the Python DSL, no code required:
+
+```yaml
+# stubs.yaml
+port: 8080
+routes:
+  - method: GET
+    path: /hello/{name}
+    status: 200
+    body:
+      message: "Hello, {name}!"
+
+  - method: POST
+    path: /api/orders
+    status: 201
+    body:
+      created: true
+
+  - method: GET
+    path: /flaky
+    sequence:
+      - status: 200
+        body: {ok: true}
+      - status: 503
+        body: {error: down}
+    cycle: true
+
+  - method: GET
+    path: /api/data
+    status: 200
+    body: {data: ok}
+    delay_ms: 200
+```
+
+You can also load config from Python:
+
+```python
+server = mimicker(8080).load_config("stubs.yaml")
+```
+
+### CLI commands
+
+```bash
+# Start the server from a config file
+mimicker serve --config stubs.yaml
+
+# Start with an inline one-liner (no file needed)
+mimicker serve --stub "GET /ping -> 200 {\"ok\": true}"
+
+# Wait until the server is ready (great for scripts and CI before_script)
+mimicker wait --url http://localhost:8080 --timeout 10
+
+# Validate a stub file without starting a server (use as a pre-commit/CI lint)
+mimicker validate stubs.yaml
+
+# Print a stub coverage + request-drift report after your tests
+mimicker report --format text
+mimicker report --format github-summary   # Markdown table for GitHub Actions summary
+mimicker report --format json             # Machine-readable
+mimicker report --fail-on-unmatched       # Exit 1 if any requests hit no stub
+```
+
+### Built-in health endpoint
+
+Every running Mimicker server exposes `GET /__mimicker__/health` returning `{"status": "up"}`.
+Use it in Docker `HEALTHCHECK`, readiness probes, and CI health gates — no extra config needed.
+
+---
+
+## Docker
+
+```bash
+# Quickstart
+docker run -p 8080:8080 ghcr.io/amaziahub/mimicker:latest
+
+# With a stubs file
+docker run -p 8080:8080 \
+  -v ./stubs.yaml:/config/stubs.yaml:ro \
+  ghcr.io/amaziahub/mimicker:latest
+```
+
+Mimicker auto-loads `/config/stubs.yaml` when present — no flags needed.
+
+### docker-compose (with health gate)
+
+```yaml
+services:
+  mimicker:
+    image: ghcr.io/amaziahub/mimicker:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./stubs.yaml:/config/stubs.yaml:ro
+    healthcheck:
+      test: ["CMD", "mimicker", "wait", "--url", "http://localhost:8080", "--timeout", "2"]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+
+  myapp:
+    image: myapp:latest
+    depends_on:
+      mimicker:
+        condition: service_healthy   # myapp only starts when Mimicker is ready
+    environment:
+      DOWNSTREAM_URL: http://mimicker:8080
+```
+
+---
+
+## GitHub Actions
+
+Add Mimicker to any workflow in 2 lines — server is guaranteed healthy before your tests run:
+
+```yaml
+steps:
+  - uses: amaziahub/mimicker-action@v1
+    id: mimicker
+    with:
+      stubs: ./test/stubs.yaml   # optional
+      port: 8080
+
+  - name: Run tests
+    run: pytest
+    env:
+      MOCK_URL: ${{ steps.mimicker.outputs.url }}
+
+  # Optional: post stub coverage to the job summary
+  - uses: amaziahub/mimicker-action/report@v1
+    if: always()
+    with:
+      fail_on_unmatched: true   # fail the build on contract drift
+```
+
+The action (source in `contrib/github-action/`) is published separately at
+[amaziahub/mimicker-action](https://github.com/amaziahub/mimicker-action).
+
+---
+
+## GitLab CI/CD
+
+```yaml
+include:
+  - component: gitlab.com/amaziahub/mimicker-component/serve@1.0
+    inputs:
+      stubs_file: test/stubs.yaml
+      port: 8080
+
+test:
+  extends: .mimicker-serve
+  script:
+    - pytest
+```
+
+Component source is in `contrib/gitlab-component/`.
+
+---
+
+## Stub Coverage & Request-Drift Reporting
+
+After your tests run, Mimicker knows exactly which stubs were exercised and
+which real requests hit no stub (a signal that your code is calling endpoints
+you haven't mocked — "contract drift").
+
+```bash
+mimicker report --format github-summary
+```
+
+Produces a Markdown table posted to `$GITHUB_STEP_SUMMARY`:
+
+| Method | Path | Hits |
+|--------|------|-----:|
+| `GET` | `/api/orders` | ✅ 3 |
+| `GET` | `/api/users` | ❌ 0 |
+
+Plus an **Unmatched Requests** table showing every request that hit no stub.
+
+Use `--fail-on-unmatched` to turn contract drift into a hard CI gate.
+
+The raw data is always available at `GET /__mimicker__/report` on the running server.
+
+---
+
 ## Logging
 Mimicker includes built-in logging to help you observe and debug how your mocked endpoints behave.
 

@@ -1,0 +1,34 @@
+##############################################################################
+# Example: running your service with Mimicker as a mock dependency.
+#
+# Mount your stubs.yaml at /config/stubs.yaml and Mimicker auto-loads it.
+# The `depends_on: condition: service_healthy` gate ensures your app only
+# starts once Mimicker's built-in health endpoint is returning 200.
+#
+# Usage:
+#   docker compose up
+##############################################################################
+
+services:
+  mimicker:
+    image: ghcr.io/amaziahub/mimicker:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./stubs.yaml:/config/stubs.yaml:ro
+    healthcheck:
+      test: ["CMD", "mimicker", "wait", "--url", "http://localhost:8080", "--timeout", "2"]
+      interval: 2s
+      timeout: 3s
+      retries: 5
+      start_period: 3s
+
+  # Replace with your own service image. Mimicker is reachable as http://mimicker:8080
+  # inside the compose network.
+  myapp:
+    image: myapp:latest
+    depends_on:
+      mimicker:
+        condition: service_healthy
+    environment:
+      DOWNSTREAM_URL: http://mimicker:8080

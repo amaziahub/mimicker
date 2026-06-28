@@ -1,11 +1,15 @@
 import http.server
 import json
 from time import sleep
-from typing import Any, Tuple, Optional, Dict, List
+from typing import Any, Dict, List, Optional, Tuple
 from urllib.parse import parse_qs, urlparse
 
 from mimicker.logger import get_logger
 from mimicker.stub_group import Stub, StubGroup
+
+_HEALTH_PATH = "/__mimicker__/health"
+_REPORT_PATH = "/__mimicker__/report"
+_ADMIN_PREFIX = "/__mimicker__/"
 
 
 class MimickerHandler(http.server.SimpleHTTPRequestHandler):
@@ -34,6 +38,9 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
         self._handle_request("PATCH")
 
     def _handle_request(self, method: str):
+        parsed = urlparse(self.path)
+        clean_path = parsed.path
+
         request_headers = {key.lower(): value for key, value in self.headers.items()}
         request_body = self._get_request_body()
 
@@ -45,8 +52,13 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
 
         if matched_stub:
             self._send_response(matched_stub, method, path_params,
-                                parse_qs(urlparse(self.path).query), request_body,
+                                parse_qs(parsed.query), request_body,
                                 request_headers)
+        elif clean_path == _HEALTH_PATH:
+            # User stubs take precedence; admin handler is the fallback.
+            self._send_admin_json({"status": "up"})
+        elif clean_path == _REPORT_PATH:
+            self._send_admin_json(self.stub_matcher.tracker.report())
         else:
             self.logger.warning("No match for %s %s. Returning 404.", method, self.path)
             self._send_404_response(method)
@@ -61,6 +73,13 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
             headers_str,
             f"\nBody:\n{body_str}" if body_str else ""
         )
+
+    def _send_admin_json(self, data: dict):
+        body = json.dumps(data).encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        self.wfile.write(body)
 
     def _send_response(self, matched_stub: Stub, method: str,
                        path_params: Dict[str, str],
@@ -124,6 +143,8 @@ class MimickerHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(response).encode('utf-8'))
         elif isinstance(response, str):
             self.wfile.write(response.encode('utf-8'))
+        elif response is None:
+            pass
         else:
             self.wfile.write(str(response).encode('utf-8'))
 

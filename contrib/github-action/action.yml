@@ -1,0 +1,74 @@
+name: Mimicker HTTP Mock Server
+description: >
+  Spin up a Mimicker mock server as a Docker container in your GitHub Actions workflow.
+  The action waits for the server to be healthy before returning, so your test step
+  can start immediately — no manual polling required.
+
+branding:
+  icon: server
+  color: blue
+
+inputs:
+  stubs:
+    description: >
+      Path (relative to $GITHUB_WORKSPACE) of the YAML stub config file to mount.
+      If omitted, the server starts with no pre-loaded routes (you can register them
+      via the admin API at runtime).
+    required: false
+    default: ''
+  port:
+    description: Host port to expose (default 8080).
+    required: false
+    default: '8080'
+  version:
+    description: Mimicker Docker image version tag (default latest).
+    required: false
+    default: 'latest'
+  timeout:
+    description: Seconds to wait for the server to become healthy (default 30).
+    required: false
+    default: '30'
+
+outputs:
+  url:
+    description: Base URL of the running Mimicker server (e.g. http://localhost:8080).
+    value: ${{ steps.set-url.outputs.url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Start Mimicker container
+      id: start
+      shell: bash
+      run: |
+        STUBS_MOUNT=""
+        if [ -n "${{ inputs.stubs }}" ]; then
+          STUBS_MOUNT="-v ${{ github.workspace }}/${{ inputs.stubs }}:/config/stubs.yaml:ro"
+        fi
+        docker run -d \
+          --name mimicker \
+          -p "${{ inputs.port }}:8080" \
+          $STUBS_MOUNT \
+          "ghcr.io/amaziahub/mimicker:${{ inputs.version }}"
+
+    - name: Wait for Mimicker to be healthy
+      shell: bash
+      run: |
+        TIMEOUT=${{ inputs.timeout }}
+        URL="http://localhost:${{ inputs.port }}/__mimicker__/health"
+        elapsed=0
+        until curl -sf "$URL" > /dev/null 2>&1; do
+          if [ "$elapsed" -ge "$TIMEOUT" ]; then
+            echo "::error::Mimicker did not become healthy within ${TIMEOUT}s"
+            docker logs mimicker
+            exit 1
+          fi
+          sleep 0.5
+          elapsed=$((elapsed + 1))
+        done
+        echo "Mimicker is healthy at http://localhost:${{ inputs.port }}"
+
+    - name: Set output URL
+      id: set-url
+      shell: bash
+      run: echo "url=http://localhost:${{ inputs.port }}" >> "$GITHUB_OUTPUT"
