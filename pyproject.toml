@@ -6,8 +6,8 @@ authors = ["Amazia Gur <amaziagur@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 keywords = ["http", "mocking", "testing", "mock-server", "stubbing", "ci-cd", "http-server", "testing-tools", "stub-server", "purepython"]
-repository = "https://github.com/amaziahub/mimicker"
-homepage = "https://github.com/amaziahub/mimicker"
+repository = "https://github.com/mimickerhq/mimicker"
+homepage = "https://github.com/mimickerhq/mimicker"
 
 [tool.poetry.scripts]
 mimicker = "mimicker.cli:main"
@@ -24,6 +24,7 @@ requests = "^2.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest-cov = "<5.0"
+pre-commit = {version = "^3.7", python = ">=3.9,<4.0"}
 
 [tool.poetry.group.docs.dependencies]
 mkdocs-material = {version = "^9.5", python = ">=3.8,<4.0"}

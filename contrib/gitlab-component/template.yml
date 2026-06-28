@@ -1,11 +1,11 @@
 ##############################################################################
 # GitLab CI/CD Catalog Component — Mimicker HTTP Mock Server
 #
-# Publish this file to gitlab.com/amaziahub/mimicker-component
+# Publish this file to gitlab.com/mimickerhq/mimicker-component
 # Usage:
 #
 #   include:
-#     - component: gitlab.com/amaziahub/mimicker-component/serve@1.0
+#     - component: gitlab.com/mimickerhq/mimicker-component/serve@1.0
 #       inputs:
 #         stubs_file: test/stubs.yaml   # optional
 #         port: 8080                    # optional
@@ -47,7 +47,7 @@ spec:
         --name mimicker \
         --network host \
         $STUBS_MOUNT \
-        "ghcr.io/amaziahub/mimicker:${MIMICKER_VERSION}"
+        "ghcr.io/mimickerhq/mimicker:${MIMICKER_VERSION}"
 
       # Wait for health without relying on Python being installed in this job
       elapsed=0

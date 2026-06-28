@@ -9,7 +9,7 @@ Use the Mimicker GitLab CI Catalog component to spin up a mock server in any pip
 ```yaml
 # .gitlab-ci.yml
 include:
-  - component: gitlab.com/amaziahub/mimicker-component/serve@1.0
+  - component: gitlab.com/mimickerhq/mimicker-component/serve@1.0
     inputs:
       stubs_file: test/stubs.yaml   # optional
       port: 8080
@@ -50,7 +50,7 @@ test:
         --name mimicker \
         --network host \
         -v "$CI_PROJECT_DIR/test/stubs.yaml:/config/stubs.yaml:ro" \
-        ghcr.io/amaziahub/mimicker:latest
+        ghcr.io/mimickerhq/mimicker:latest
 
       # Wait for health
       elapsed=0
@@ -86,7 +86,7 @@ See [Stub Coverage Reports](stub-coverage-reports.md) for full details.
 
 ## Component source
 
-The component source lives in [`contrib/gitlab-component/`](https://github.com/amaziahub/mimicker/tree/main/contrib/gitlab-component) and is published at `gitlab.com/amaziahub/mimicker-component`.
+The component source lives in [`contrib/gitlab-component/`](https://github.com/mimickerhq/mimicker/tree/main/contrib/gitlab-component) and is published at `gitlab.com/mimickerhq/mimicker-component`.
 
 ---
 

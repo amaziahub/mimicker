@@ -52,8 +52,8 @@ Mimicker — lightweight HTTP mock server
 If you're running Mimicker in CI without a Python environment, pull the official image:
 
 ```bash
-docker pull ghcr.io/amaziahub/mimicker:latest
-docker run -p 8080:8080 ghcr.io/amaziahub/mimicker:latest
+docker pull ghcr.io/mimickerhq/mimicker:latest
+docker run -p 8080:8080 ghcr.io/mimickerhq/mimicker:latest
 ```
 
 See the [Docker guide](../ci-cd/docker.md) for full details.

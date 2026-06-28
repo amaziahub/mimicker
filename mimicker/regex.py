@@ -7,26 +7,26 @@ from mimicker.exceptions import TemplateError
 def parse_endpoint_pattern(template: str) -> Pattern:
     """
     Parse an endpoint pattern into a regular expression for URL matching.
-    
+
     This function creates a regex pattern that can match URLs with both static and
     parameterized path segments, as well as query parameters. Path parameters are
     specified using curly braces (e.g., '/{user_id}/profile'). Query parameters
     can be either static or parameterized.
-    
+
     Examples:
         "/users/{id}"                  # Matches: "/users/123"
         "/api/{version}/items"         # Matches: "/api/v1/items"
         "/search?q={term}"             # Matches: "/search?q=python"
         "/filter?min={min}&max={max}"  # Matches: "/filter?min=10&max=100"
-    
+
     Args:
         template: A URL template with optional path and query parameters.
                   Path parameters are specified as {name}.
                   Query parameters can be static or parameterized as key={name}.
-    
+
     Returns:
         A compiled regex Pattern that matches URLs according to the template.
-    
+
     Raises:
         TemplateError: If parameter names are repeated.
         TemplateError: If query parameters do not match the expected URL format.
@@ -46,13 +46,13 @@ def parse_endpoint_pattern(template: str) -> Pattern:
 def _parse_without_query(template: str) -> Pattern:
     """
     Parse an endpoint pattern without explicit query parameters.
-    
+
     Creates a regex pattern that matches the path exactly and optionally
     matches any query string (without parsing its contents).
-    
+
     Args:
         template: URL template without a '?' character
-        
+
     Returns:
         Compiled regex Pattern for matching URLs
     """
@@ -65,16 +65,16 @@ def _parse_without_query(template: str) -> Pattern:
 def _parse_with_query(template: str) -> Pattern:
     """
     Parse an endpoint pattern with explicit query parameters.
-    
+
     Creates a regex pattern that matches both the path and specific query parameters.
     Query parameters can be static values or parameterized with {name} syntax.
-    
+
     Args:
         template: URL template containing a '?' followed by query parameters
-        
+
     Returns:
         Compiled regex Pattern for matching URLs with specific query parameters
-        
+
     Raises:
         TemplateError: If a query parameter doesn't contain an equals sign
     """
@@ -105,14 +105,14 @@ def _parse_with_query(template: str) -> Pattern:
 def _build_path_regex(path_t: str) -> str:
     """
     Build a regex pattern for matching the path portion of a URL.
-    
+
     Converts a path template with parameterized segments into a regex string.
     Each path segment is either matched literally or converted to a named capture
     group if it's a parameter.
-    
+
     Args:
         path_t: Path template, possibly containing parameters like {name}
-        
+
     Returns:
         A regex string for matching the path (not compiled)
     """

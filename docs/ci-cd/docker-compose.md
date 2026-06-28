@@ -10,7 +10,7 @@ Use Mimicker as a service dependency in docker-compose. The `service_healthy` co
 # docker-compose.yml
 services:
   mimicker:
-    image: ghcr.io/amaziahub/mimicker:latest
+    image: ghcr.io/mimickerhq/mimicker:latest
     ports:
       - "8080:8080"
     volumes:
@@ -42,7 +42,7 @@ docker compose up
 ```yaml
 services:
   mimicker:
-    image: ghcr.io/amaziahub/mimicker:latest
+    image: ghcr.io/mimickerhq/mimicker:latest
     environment:
       MIMICKER_PORT: "9090"
     ports:
@@ -58,7 +58,7 @@ Setting `MIMICKER_PORT` keeps the built-in `HEALTHCHECK` pointing at the right p
 ```yaml
 services:
   mimicker:
-    image: ghcr.io/amaziahub/mimicker:latest
+    image: ghcr.io/mimickerhq/mimicker:latest
     command: serve --stub 'GET /ping -> 200 {"ok": true}'
     ports:
       - "8080:8080"
@@ -71,7 +71,7 @@ services:
 ```yaml
 services:
   mimicker:
-    image: ghcr.io/amaziahub/mimicker:latest
+    image: ghcr.io/mimickerhq/mimicker:latest
     volumes:
       - ./test/stubs.yaml:/config/stubs.yaml:ro
     healthcheck:
