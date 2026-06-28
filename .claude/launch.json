@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "logo-preview",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "9321", "--directory", "/tmp"],
+      "port": 9321
+    }
+  ]
+}
