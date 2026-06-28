@@ -8,7 +8,7 @@ Add Mimicker to any workflow in two lines. The action starts the server, waits u
 
 ```yaml
 steps:
-  - uses: amaziahub/mimicker-action@v1
+  - uses: mimickerhq/mimicker-action@v1
     id: mimicker
     with:
       stubs: ./test/stubs.yaml   # optional
@@ -47,7 +47,7 @@ Post a stub coverage summary to the GitHub Actions job summary after your tests 
 
 ```yaml
 steps:
-  - uses: amaziahub/mimicker-action@v1
+  - uses: mimickerhq/mimicker-action@v1
     id: mimicker
     with:
       stubs: ./test/stubs.yaml
@@ -55,7 +55,7 @@ steps:
   - name: Run tests
     run: pytest
 
-  - uses: amaziahub/mimicker-action/report@v1
+  - uses: mimickerhq/mimicker-action/report@v1
     if: always()   # run even if tests fail
     with:
       url: ${{ steps.mimicker.outputs.url }}
@@ -80,7 +80,7 @@ If you prefer not to use the composite action:
 ```yaml
 services:
   mimicker:
-    image: ghcr.io/amaziahub/mimicker:latest
+    image: ghcr.io/mimickerhq/mimicker:latest
     ports:
       - 8080:8080
 
@@ -99,7 +99,7 @@ steps:
 
 ## Action source
 
-The action source lives in [`contrib/github-action/`](https://github.com/amaziahub/mimicker/tree/main/contrib/github-action) and is published separately at [amaziahub/mimicker-action](https://github.com/amaziahub/mimicker-action).
+The action source lives in [`contrib/github-action/`](https://github.com/mimickerhq/mimicker/tree/main/contrib/github-action) and is published separately at [mimickerhq/mimicker-action](https://github.com/mimickerhq/mimicker-action).
 
 ---
 

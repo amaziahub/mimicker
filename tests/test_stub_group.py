@@ -51,7 +51,7 @@ def test_match_w_explicit_query_param_matches_query_param():
                    {"message": "Hello, {name}!"})
 
     matched, path_param = stub_group.match("GET", "/hello/mimicker?greeting=world")
-    
+
     assert_that(matched, is_((200, 0., {"message": "Hello, {name}!"}, None, None, None, None)))
     assert_that(path_param, is_({"name": "world"}))
 
@@ -64,7 +64,7 @@ def test_match_without_explicit_query_param_matches_all_query_params():
                    {"message": "Hello, world!"})
 
     matched, _ = stub_group.match("GET", "/hello/mimicker?greeting=world&age=20&city=NewYork")
-    
+
     assert_that(matched, not_none())
 
 

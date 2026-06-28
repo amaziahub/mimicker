@@ -11,7 +11,7 @@
 
 services:
   mimicker:
-    image: ghcr.io/amaziahub/mimicker:latest
+    image: ghcr.io/mimickerhq/mimicker:latest
     ports:
       - "8080:8080"
     volumes:

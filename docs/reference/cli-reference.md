@@ -6,7 +6,7 @@ Install:
 
 ```bash
 pip install mimicker
-# or: docker run ghcr.io/amaziahub/mimicker ...
+# or: docker run ghcr.io/mimickerhq/mimicker ...
 ```
 
 ---
@@ -40,7 +40,7 @@ mimicker serve --stub 'GET /ping -> 200 {"ok": true}'
 # Docker: auto-loads /config/stubs.yaml
 docker run -p 8080:8080 \
   -v ./stubs.yaml:/config/stubs.yaml:ro \
-  ghcr.io/amaziahub/mimicker:latest
+  ghcr.io/mimickerhq/mimicker:latest
 ```
 
 !!! tip "Environment variable port"

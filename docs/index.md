@@ -4,7 +4,7 @@
 
 Mimicker lets you stub HTTP endpoints in seconds. Define stubs in Python, YAML, or from the CLI — no code required for CI-only users.
 
-[![Mimicker Tests](https://github.com/amaziahub/mimicker/actions/workflows/test.yml/badge.svg)](https://github.com/amaziahub/mimicker/actions/workflows/test.yml)
+[![Mimicker Tests](https://github.com/mimickerhq/mimicker/actions/workflows/test.yml/badge.svg)](https://github.com/mimickerhq/mimicker/actions/workflows/test.yml)
 [![PyPI Version](https://img.shields.io/pypi/v/mimicker.svg)](https://pypi.org/project/mimicker/)
 [![Downloads](https://pepy.tech/badge/mimicker)](https://pepy.tech/project/mimicker)
 [![License](http://img.shields.io/:license-apache2.0-red.svg)](http://doge.mit-license.org)
@@ -57,7 +57,7 @@ The same stub, three ways — pick whichever fits your workflow:
 | **Python DSL** | Fluent builder API — `get("/path").status(200).body({...})` |
 | **YAML / JSON config** | Declarative stubs — no Python required for CI pipelines |
 | **CLI** | `mimicker serve / wait / validate / report` |
-| **Docker image** | `ghcr.io/amaziahub/mimicker` — mount a YAML file and go |
+| **Docker image** | `ghcr.io/mimickerhq/mimicker` — mount a YAML file and go |
 | **Sequence responses** | Return different responses on successive calls |
 | **Rate limiting** | Simulate 429 responses with configurable windows |
 | **Dynamic responses** | `response_func` computes the response from request data |

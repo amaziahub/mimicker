@@ -110,7 +110,7 @@ Exits with code `1` if any requests were unmatched. Use this to turn contract dr
 ## GitHub Actions integration
 
 ```yaml
-- uses: amaziahub/mimicker-action@v1
+- uses: mimickerhq/mimicker-action@v1
   id: mimicker
   with:
     stubs: ./test/stubs.yaml
@@ -118,7 +118,7 @@ Exits with code `1` if any requests were unmatched. Use this to turn contract dr
 - name: Run tests
   run: pytest
 
-- uses: amaziahub/mimicker-action/report@v1
+- uses: mimickerhq/mimicker-action/report@v1
   if: always()
   with:
     url: ${{ steps.mimicker.outputs.url }}

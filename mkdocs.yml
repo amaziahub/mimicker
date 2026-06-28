@@ -1,8 +1,8 @@
 site_name: Mimicker
 site_description: Lightweight Python-native HTTP mock server for testing and CI/CD
-site_url: https://amaziahub.github.io/mimicker
-repo_url: https://github.com/amaziahub/mimicker
-repo_name: amaziahub/mimicker
+site_url: https://mimickerhq.github.io/mimicker
+repo_url: https://github.com/mimickerhq/mimicker
+repo_name: mimickerhq/mimicker
 
 theme:
   name: material
@@ -51,6 +51,7 @@ nav:
       - CLI Reference: reference/cli-reference.md
       - Stub File Schema: reference/stub-file-schema.md
       - Python API: reference/python-api.md
+  - Contributing: contributing.md
 
 markdown_extensions:
   - admonition
@@ -72,7 +73,7 @@ plugins:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/amaziahub/mimicker
+      link: https://github.com/mimickerhq/mimicker
     - icon: fontawesome/brands/python
       link: https://pypi.org/project/mimicker/
     - icon: fontawesome/brands/slack

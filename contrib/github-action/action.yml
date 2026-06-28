@@ -49,7 +49,7 @@ runs:
           --name mimicker \
           -p "${{ inputs.port }}:8080" \
           $STUBS_MOUNT \
-          "ghcr.io/amaziahub/mimicker:${{ inputs.version }}"
+          "ghcr.io/mimickerhq/mimicker:${{ inputs.version }}"
 
     - name: Wait for Mimicker to be healthy
       shell: bash

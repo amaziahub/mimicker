@@ -5,7 +5,7 @@ Run Mimicker in any CI environment — no Python installation required.
 ## Image
 
 ```
-ghcr.io/amaziahub/mimicker:latest
+ghcr.io/mimickerhq/mimicker:latest
 ```
 
 Multi-arch: `linux/amd64` and `linux/arm64`. Non-root user. Automatic health check built in.
@@ -16,12 +16,12 @@ Multi-arch: `linux/amd64` and `linux/arm64`. Non-root user. Automatic health che
 
 ```bash
 # Start with no stubs (returns 404 for all paths)
-docker run -p 8080:8080 ghcr.io/amaziahub/mimicker:latest
+docker run -p 8080:8080 ghcr.io/mimickerhq/mimicker:latest
 
 # Mount a stubs file (auto-loaded from /config/stubs.yaml)
 docker run -p 8080:8080 \
   -v ./stubs.yaml:/config/stubs.yaml:ro \
-  ghcr.io/amaziahub/mimicker:latest
+  ghcr.io/mimickerhq/mimicker:latest
 ```
 
 The image auto-loads `/config/stubs.yaml` when present — no `--config` flag needed.
@@ -31,7 +31,7 @@ The image auto-loads `/config/stubs.yaml` when present — no `--config` flag ne
 ## Custom port
 
 ```bash
-docker run -e MIMICKER_PORT=9090 -p 9090:9090 ghcr.io/amaziahub/mimicker:latest
+docker run -e MIMICKER_PORT=9090 -p 9090:9090 ghcr.io/mimickerhq/mimicker:latest
 ```
 
 Setting `MIMICKER_PORT` also keeps the built-in `HEALTHCHECK` pointing at the right port.
@@ -54,7 +54,7 @@ Wait for the container to be healthy before running tests:
 ```bash
 docker run -d --name mock -p 8080:8080 \
   -v ./stubs.yaml:/config/stubs.yaml:ro \
-  ghcr.io/amaziahub/mimicker:latest
+  ghcr.io/mimickerhq/mimicker:latest
 
 # Block until healthy
 mimicker wait --url http://localhost:8080 --timeout 30
@@ -74,7 +74,7 @@ until curl -sf http://localhost:8080/__mimicker__/health; do sleep 1; done
 # Validate a stubs file without starting a server
 docker run --rm \
   -v ./stubs.yaml:/config/stubs.yaml:ro \
-  ghcr.io/amaziahub/mimicker:latest \
+  ghcr.io/mimickerhq/mimicker:latest \
   validate /config/stubs.yaml
 
 # Fetch the stub coverage report from a running container
