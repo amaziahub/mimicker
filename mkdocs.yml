@@ -1,0 +1,79 @@
+site_name: Mimicker
+site_description: Lightweight Python-native HTTP mock server for testing and CI/CD
+site_url: https://amaziahub.github.io/mimicker
+repo_url: https://github.com/amaziahub/mimicker
+repo_name: amaziahub/mimicker
+
+theme:
+  name: material
+  logo: assets/logo.png
+  favicon: assets/logo.png
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.instant
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+    - toc.integrate
+
+nav:
+  - Home: index.md
+  - Get Started:
+      - Installation: getting-started/installation.md
+      - Quickstart: getting-started/quickstart.md
+  - Guides:
+      - Stubbing Guide: guides/stubbing-guide.md
+      - Path & Query Params: guides/path-and-query-params.md
+      - Dynamic Responses: guides/dynamic-responses.md
+  - CI/CD:
+      - Docker: ci-cd/docker.md
+      - GitHub Actions: ci-cd/github-actions.md
+      - GitLab CI: ci-cd/gitlab-ci.md
+      - docker-compose: ci-cd/docker-compose.md
+      - Stub Coverage Reports: ci-cd/stub-coverage-reports.md
+  - Reference:
+      - CLI Reference: reference/cli-reference.md
+      - Stub File Schema: reference/stub-file-schema.md
+      - Python API: reference/python-api.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/amaziahub/mimicker
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/mimicker/
+    - icon: fontawesome/brands/slack
+      link: https://join.slack.com/t/mimicker/shared_invite/zt-2yr7vubw4-8Y09YyxZ5j~G2tlQ5uOXKw
