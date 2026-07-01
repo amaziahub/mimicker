@@ -24,7 +24,7 @@ requests = "^2.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest-cov = "<5.0"
-pre-commit = {version = "^3.7", python = ">=3.9,<4.0"}
+pre-commit = {version = ">=3.7,<5.0", python = ">=3.9,<4.0"}
 
 [tool.poetry.group.docs.dependencies]
 mkdocs-material = {version = "^9.5", python = ">=3.8,<4.0"}
